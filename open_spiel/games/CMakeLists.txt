@@ -130,6 +130,8 @@ set(GAME_SOURCES
   tic_tac_toe.h
   tiny_bridge.cc
   tiny_bridge.h
+  tiny_cant_stop.cc
+  tiny_cant_stop.h
   tiny_hanabi.cc
   tiny_hanabi.h
   trade_comm.cc
@@ -462,6 +464,10 @@ add_executable(tiny_bridge_test tiny_bridge_test.cc ${OPEN_SPIEL_OBJECTS}
                $<TARGET_OBJECTS:tests>
                $<TARGET_OBJECTS:algorithms>)
 add_test(tiny_bridge_test tiny_bridge_test)
+
+add_executable(tiny_cant_stop_test tiny_cant_stop_test.cc ${OPEN_SPIEL_OBJECTS}
+               $<TARGET_OBJECTS:tests>)
+add_test(tiny_cant_stop_test tiny_cant_stop_test)
 
 add_executable(tiny_hanabi_test tiny_hanabi_test.cc ${OPEN_SPIEL_OBJECTS}
                $<TARGET_OBJECTS:tests>

@@ -107,6 +107,7 @@ EXPECTED_GAMES = set([
     "tic_tac_toe",
     "tiny_bridge_2p",
     "tiny_bridge_4p",
+    "tiny_cant_stop",
     "tiny_hanabi",
     "trade_comm",
     "turn_based_simultaneous_game",
