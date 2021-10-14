@@ -33,6 +33,7 @@ enum ActionType { kRoll = 0, kStop = 1 };
 constexpr int kBinSize = 1;
 
 // Default parameters.
+constexpr const char* kDefaultObservationEncoding = "one_hot";
 constexpr int kDefaultDiceOutcomes = 6;
 constexpr int kDefaultHorizon = 1000;
 constexpr int kDefaultPlayers = 2;
@@ -55,6 +56,7 @@ const GameType kGameType{
     /*provides_observation_tensor=*/true,
     /*parameter_specification=*/
     {
+        {"observationencoding", GameParameter(static_cast<std::string>(kDefaultObservationEncoding))},
         {"players", GameParameter(kDefaultPlayers)},
         {"horizon", GameParameter(kDefaultHorizon)},
         {"winscore", GameParameter(kDefaultWinScore)},
@@ -67,6 +69,16 @@ static std::shared_ptr<const Game> Factory(const GameParameters& params) {
 
 REGISTER_SPIEL_GAME(kGameType, Factory);
 }  // namespace
+
+ObservationEncoding ParseObservationEncoding(const std::string& oe_str) {
+  if (oe_str == "ordinal") {
+    return ObservationEncoding::kOrdinal;
+  } else if (oe_str == "one_hot") {
+    return ObservationEncoding::kOneHot;
+  } else {
+    SpielFatalError("Unrecognized observationencoding parameter: " + oe_str);
+  }
+}
 
 std::string PigState::ActionToString(Player player, Action move_id) const {
   if (player == kChancePlayerId) {
@@ -117,8 +129,19 @@ std::string PigState::ObservationString(Player player) const {
 }
 
 std::vector<int> PigGame::ObservationTensorShape() const {
-  int num_bins = (win_score_ / kBinSize) + 1;
-  return {1 + num_players_, num_bins};
+  switch (observation_encoding_) {
+    case ObservationEncoding::kOrdinal:
+      return {1 + num_players_};
+
+    case ObservationEncoding::kOneHot:
+    {
+      int num_bins = (win_score_ / kBinSize) + 1;
+      return {1 + num_players_, num_bins};
+    }
+
+    default:
+      SpielFatalError("Unknown observation_encoding_");
+  }
 }
 
 void PigState::ObservationTensor(Player player,
@@ -126,50 +149,71 @@ void PigState::ObservationTensor(Player player,
   SPIEL_CHECK_GE(player, 0);
   SPIEL_CHECK_LT(player, num_players_);
 
-  // One extra bin for when value is >= max.
-  // So for win_score_ 100, binSize = 1 -> 0, 1, ..., 99, >= 100.
-  int num_bins = (win_score_ / kBinSize) + 1;
-
-  // One-hot encoding: turn total (#bin) followed by p1, p2, ...
-  SPIEL_CHECK_EQ(values.size(), num_bins + num_players_ * num_bins);
-  std::fill(values.begin(), values.end(), 0.);
-  int pos = 0;
-
-  // One-hot encoding:
-  //  - turn total (#bins)
-  //  - player 0 (#bins)
-  //  - player 1 (#bins)
-  //      .
-  //      .
-  //      .
-
-  int bin = turn_total_ / kBinSize;
-  if (bin >= num_bins) {
-    // When the value is too large, use last bin.
-    values[pos + (num_bins - 1)] = 1;
-  } else {
-    values[pos + bin] = 1;
-  }
-
-  pos += num_bins;
-
-  // Find the right bin for each player.
-  for (auto p = Player{0}; p < num_players_; p++) {
-    bin = scores_[p] / kBinSize;
-    if (bin >= num_bins) {
-      // When the value is too large, use last bin.
-      values[pos + (num_bins - 1)] = 1;
-    } else {
-      values[pos + bin] = 1;
+  switch (observation_encoding_) {
+    case ObservationEncoding::kOrdinal:
+    {
+      // Ordinal encoding: turn total (int) followed by p1, p2, ...
+      SPIEL_CHECK_EQ(values.size(), 1 + num_players_);
+      values[0] = turn_total_;
+      for (auto p = Player{0}; p < num_players_; p++) {
+        values[1 + p] = scores_[p];
+      }
+      break;
     }
 
-    pos += num_bins;
+    case ObservationEncoding::kOneHot:
+    {
+      // One extra bin for when value is >= max.
+      // So for win_score_ 100, binSize = 1 -> 0, 1, ..., 99, >= 100.
+      int num_bins = (win_score_ / kBinSize) + 1;
+
+      // One-hot encoding: turn total (#bin) followed by p1, p2, ...
+      SPIEL_CHECK_EQ(values.size(), num_bins + num_players_ * num_bins);
+      std::fill(values.begin(), values.end(), 0.);
+      int pos = 0;
+
+      // One-hot encoding:
+      //  - turn total (#bins)
+      //  - player 0 (#bins)
+      //  - player 1 (#bins)
+      //      .
+      //      .
+      //      .
+
+      int bin = turn_total_ / kBinSize;
+      if (bin >= num_bins) {
+        // When the value is too large, use last bin.
+        values[pos + (num_bins - 1)] = 1;
+      } else {
+        values[pos + bin] = 1;
+      }
+
+      pos += num_bins;
+
+      // Find the right bin for each player.
+      for (auto p = Player{0}; p < num_players_; p++) {
+        bin = scores_[p] / kBinSize;
+        if (bin >= num_bins) {
+          // When the value is too large, use last bin.
+          values[pos + (num_bins - 1)] = 1;
+        } else {
+          values[pos + bin] = 1;
+        }
+
+        pos += num_bins;
+      }
+      break;
+    }
+
+    default:
+      SpielFatalError("Unknown observation_encoding_");
   }
 }
 
-PigState::PigState(std::shared_ptr<const Game> game, int dice_outcomes,
-                   int horizon, int win_score)
+PigState::PigState(std::shared_ptr<const Game> game, ObservationEncoding observation_encoding,
+                   int dice_outcomes, int horizon, int win_score)
     : State(game),
+      observation_encoding_(observation_encoding),
       dice_outcomes_(dice_outcomes),
       horizon_(horizon),
       win_score_(win_score) {
@@ -256,6 +300,8 @@ std::unique_ptr<State> PigState::Clone() const {
 
 PigGame::PigGame(const GameParameters& params)
     : Game(kGameType, params),
+      observation_encoding_(
+          ParseObservationEncoding(ParameterValue<std::string>("observationencoding"))),
       dice_outcomes_(ParameterValue<int>("diceoutcomes")),
       horizon_(ParameterValue<int>("horizon")),
       num_players_(ParameterValue<int>("players")),

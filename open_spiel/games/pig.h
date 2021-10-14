@@ -26,21 +26,28 @@
 // Also https://en.wikipedia.org/wiki/Pig_(dice_game)
 //
 // Parameters:
-//     "diceoutcomes"  int    number of outcomes of the dice  (default = 6)
-//     "horizon"       int    max number of moves before draw (default = 1000)
-//     "players"       int    number of players               (default = 2)
-//     "winscore"      int    number of points needed to win   (default = 100)
+//     "observationencoding"  str    encoding of observations        (default = "one_hot")
+//     "diceoutcomes"         int    number of outcomes of the dice  (default = 6)
+//     "horizon"              int    max number of moves before draw (default = 1000)
+//     "players"              int    number of players               (default = 2)
+//     "winscore"             int    number of points needed to win  (default = 100)
 
 namespace open_spiel {
 namespace pig {
+
+// How the observation should be encoded
+enum class ObservationEncoding {
+  kOrdinal,  // "ordinal": integer encoding.
+  kOneHot,   // "one_hot": one-hot encoding.
+};
 
 class PigGame;
 
 class PigState : public State {
  public:
   PigState(const PigState&) = default;
-  PigState(std::shared_ptr<const Game> game, int dice_outcomes, int horizon,
-           int win_score);
+  PigState(std::shared_ptr<const Game> game, ObservationEncoding observation_encoding,
+           int dice_outcomes, int horizon, int win_score);
 
   Player CurrentPlayer() const override;
   std::string ActionToString(Player player, Action move_id) const override;
@@ -62,6 +69,7 @@ class PigState : public State {
 
  private:
   // Initialize to bad/invalid values. Use open_spiel::NewInitialState()
+  ObservationEncoding observation_encoding_; // desired encoding (eg, one-hot)
   int dice_outcomes_ = -1;  // Number of different dice outcomes (eg, 6).
   int horizon_ = -1;
   int nplayers_ = -1;
@@ -83,7 +91,7 @@ class PigGame : public Game {
   int NumDistinctActions() const override { return 6; }
   std::unique_ptr<State> NewInitialState() const override {
     return std::unique_ptr<State>(
-        new PigState(shared_from_this(), dice_outcomes_, horizon_, win_score_));
+        new PigState(shared_from_this(), observation_encoding_, dice_outcomes_, horizon_, win_score_));
   }
   int MaxChanceOutcomes() const override { return dice_outcomes_; }
 
@@ -99,6 +107,9 @@ class PigGame : public Game {
   std::vector<int> ObservationTensorShape() const override;
 
  private:
+  // Encoding of the observation tensor, i.e. one-hot.
+  ObservationEncoding observation_encoding_;
+
   // Number of different dice outcomes, i.e. 6.
   int dice_outcomes_;
 
