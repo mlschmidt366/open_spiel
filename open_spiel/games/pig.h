@@ -88,7 +88,8 @@ class PigGame : public Game {
  public:
   explicit PigGame(const GameParameters& params);
 
-  int NumDistinctActions() const override { return 6; }
+  // any player can choose from at most 2 distinct actions: roll or stop
+  int NumDistinctActions() const override { return 2; }
   std::unique_ptr<State> NewInitialState() const override {
     return std::unique_ptr<State>(
         new PigState(shared_from_this(), observation_encoding_, dice_outcomes_, horizon_, win_score_));
