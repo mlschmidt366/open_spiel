@@ -133,7 +133,7 @@ std::vector<int> TinyCantStopGame::ObservationTensorShape() const {
       return {1 + num_players_, win_score_ + 1};
 
     default:
-      SpielFatalError("Unknown observation_encoding");
+      SpielFatalError("Unknown observation_encoding_");
   }
 }
 
@@ -199,7 +199,7 @@ void TinyCantStopState::ObservationTensor(Player player,
     }
 
     default:
-      SpielFatalError("Unknown observation_encoding");
+      SpielFatalError("Unknown observation_encoding_");
   }
 }
 
@@ -225,6 +225,7 @@ void TinyCantStopState::DoApplyAction(Action move) {
   // For decision node: 0 means roll, 1 means stop.
   // For chance node: outcome of the dice (0 for 1, 1 for 2+).
   if (cur_player_ >= 0 && move == kRoll) {
+    SPIEL_CHECK_LT(scores_[cur_player_] + turn_total_, win_score_);
     // Player roll -> chance node.
     cur_player_ = kChancePlayerId;
     total_moves_++;

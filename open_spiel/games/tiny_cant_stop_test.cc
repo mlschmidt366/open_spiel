@@ -29,7 +29,9 @@ void BasicTinyCantStopTests() {
     testing::RandomSimTest(
         *LoadGame("tiny_cant_stop", {{"players", GameParameter(players)}}), 100);
   }
-  testing::RandomSimTest(*LoadGame("tiny_cant_stop", {{"observationencoding", GameParameter(static_cast<std::string>("one_hot"))}}), 100);
+  std::string enc = "one_hot";
+  testing::RandomSimTest(
+      *LoadGame("tiny_cant_stop", {{"observationencoding", GameParameter(enc)}}), 100);
 }
 
 }  // namespace

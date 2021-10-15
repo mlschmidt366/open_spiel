@@ -88,12 +88,12 @@ class TinyCantStopGame : public Game {
  public:
   explicit TinyCantStopGame(const GameParameters& params);
 
-  int NumDistinctActions() const override { return 6; }
+  int NumDistinctActions() const override { return 2; }
   std::unique_ptr<State> NewInitialState() const override {
     return std::unique_ptr<State>(
         new TinyCantStopState(shared_from_this(), dice_outcomes_, horizon_, win_score_, observation_encoding_));
   }
-  int MaxChanceOutcomes() const override { return dice_outcomes_; }
+  int MaxChanceOutcomes() const override { return 2; }
 
   // There is arbitrarily chosen number to ensure the game is finite.
   int MaxGameLength() const override { return horizon_; }
