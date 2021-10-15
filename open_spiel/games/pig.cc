@@ -232,6 +232,7 @@ void PigState::DoApplyAction(Action move) {
   // For decision node: 0 means roll, 1 means stop.
   // For chance node: outcome of the dice (x-1).
   if (cur_player_ >= 0 && move == kRoll) {
+    SPIEL_CHECK_LT(scores_[cur_player_] + turn_total_, win_score_);
     // Player roll -> chance node.
     cur_player_ = kChancePlayerId;
     total_moves_++;
