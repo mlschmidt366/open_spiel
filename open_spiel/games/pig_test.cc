@@ -29,7 +29,9 @@ void BasicPigTests() {
     testing::RandomSimTest(
         *LoadGame("pig", {{"players", GameParameter(players)}}), 100);
   }
-  testing::RandomSimTest(*LoadGame("pig", {{"observationencoding", GameParameter(static_cast<std::string>("ordinal"))}}), 100);
+  std::string enc = "ordinal";
+  testing::RandomSimTest(
+      *LoadGame("pig", {{"observationencoding", GameParameter(enc)}}), 100);
 }
 
 }  // namespace
