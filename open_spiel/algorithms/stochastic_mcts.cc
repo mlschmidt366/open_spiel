@@ -91,11 +91,11 @@ double SearchNode::UCTValue(double parent_explored, double uct_c) const {
     return outcome[player];
   }
 
-  if (explored == 0) return std::numeric_limits<double>::infinity();
+  if (propagation_count == 0) return std::numeric_limits<double>::infinity();
 
   // The "greedy-value" of choosing a given child is always with respect to
   // the current player for this node.
-  return total_reward / explored +
+  return total_reward / propagation_count +
          uct_c * std::sqrt(std::log(parent_explored) / explored);
 }
 
@@ -105,7 +105,7 @@ double SearchNode::PUCTValue(double parent_explored, double uct_c) const {
     return outcome[player];
   }
 
-  return ((explored != 0 ? total_reward / explored : 0) +
+  return ((propagation_count != 0 ? total_reward / propagation_count : 0) +
           uct_c * prior * std::sqrt(parent_explored) /
               (explored + 1));
 }
@@ -357,9 +357,16 @@ std::unique_ptr<SearchNode> StochasticMCTSBot::MCTSearch(const State& state) {
     for (auto it = visit_path.rbegin(); it != visit_path.rend(); ++it) {
       SearchNode* node = *it;
 
+      // multiplying reward with cur_prob does not make any sense, as this biases the 
+      // average reward.
+      //node->total_reward +=
+      //    cur_prob * returns[node->player == kChancePlayerId ? player_id : node->player];
+
+      // DONE (TODO test): How about using the explored value for the exploration term in PUCT,
+      //       but the propagation_count to evaluate the average reward Q?
       // at chance nodes, the reward is from the perspective of the root player
       node->total_reward +=
-          cur_prob * returns[node->player == kChancePlayerId ? player_id : node->player];
+          returns[node->player == kChancePlayerId ? player_id : node->player];
       node->explored += cur_prob;
       node->propagation_count += 1;
 
