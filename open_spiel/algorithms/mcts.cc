@@ -258,7 +258,8 @@ std::unique_ptr<State> MCTSBot::ApplyTreePolicy(
   visit_path->push_back(root);
   std::unique_ptr<State> working_state = state.Clone();
   SearchNode* current_node = root;
-  while (!working_state->IsTerminal() && current_node->explore_count > 0) {
+  while (!working_state->IsTerminal()
+      && (current_node->explore_count > 0 || working_state->IsChanceNode())) {
     if (current_node->children.empty()) {
       // For a new node, initialize its state, then choose a child as normal.
       ActionsAndProbs legal_actions = evaluator_->Prior(*working_state);
@@ -343,6 +344,9 @@ std::unique_ptr<SearchNode> MCTSBot::MCTSearch(const State& state) {
       visit_path[visit_path.size() - 1]->outcome = returns;
       solved = solve_;
     } else {
+      if (working_state->IsChanceNode()) {
+        SpielFatalError("The working state with the current Tree policy can't be a chance node.");
+      }
       returns = evaluator_->Evaluate(*working_state);
       solved = false;
     }
