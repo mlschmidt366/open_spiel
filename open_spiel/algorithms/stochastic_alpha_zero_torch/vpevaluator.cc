@@ -71,9 +71,26 @@ LRUCacheInfo VPNetEvaluator::CacheInfo() {
 }
 
 std::vector<double> VPNetEvaluator::Evaluate(const State& state) {
-  // TODO(author5): currently assumes zero-sum.
-  double p0value = Inference(state).value;
-  return {p0value, -p0value};
+  if (state.IsChanceNode()) {
+    /* TODO: include later
+    std::unique_ptr<State> working_state = state.Clone();
+    open_spiel::Action last_action = working_state->UndoLastAction();
+    if (working_state->IsChanceNode()) {
+      open_spiel::SpielFatalError("AlphaZero can only handle one chance node at a time.");
+    }
+    double p0value = Inference(working_state).action_values[last_action];
+    return {p0value, -p0value};
+    */
+    // TEST with random rollout at chance nodes
+    auto test_evaluator =
+      std::make_shared<open_spiel::algorithms::RandomRolloutEvaluator>(
+          /*rollout_count*/10, /*seed*/0);
+    return test_evaluator->Evaluate(state);
+  } else {
+    // TODO(author5): currently assumes zero-sum.
+    double p0value = Inference(state).value;
+    return {p0value, -p0value};
+  }
 }
 
 open_spiel::ActionsAndProbs VPNetEvaluator::Prior(const State& state) {

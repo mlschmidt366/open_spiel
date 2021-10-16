@@ -57,7 +57,7 @@ struct ResOutputBlockConfig {
 };
 
 // Information for the model. This should be enough for any type of model
-// (residual, convultional, or MLP). It needs to be saved/loaded to/from
+// (residual, convolutional, or MLP). It needs to be saved/loaded to/from
 // a file so the input and output stream operators are overload.
 struct ModelConfig {
   std::vector<int> observation_tensor_shape;

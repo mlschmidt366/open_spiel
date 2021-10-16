@@ -573,6 +573,14 @@ class State {
     SpielFatalError("UndoAction function is not overridden; not undoing.");
   }
 
+  Action UndoLastAction() {
+    // note that we have to copy the last action, since it's gonna
+    // be deleted from the history after 'UndoAction'
+    Action last_action = history_.back().action;
+    UndoAction(history_.back().player, last_action);
+    return last_action;
+  }
+
   // Change the state of the game by applying the specified actions, one per
   // player, for simultaneous action games. This function encodes the logic of
   // the game rules. Element i of the vector is the action for player i.
