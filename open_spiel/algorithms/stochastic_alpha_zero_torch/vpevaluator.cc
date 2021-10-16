@@ -82,6 +82,7 @@ std::vector<double> VPNetEvaluator::Evaluate(const State& state) {
     return {p0value, -p0value};
     */
     // TEST with random rollout at chance nodes
+    std::cout << "AlphaZero shouldn't need to evaluate Chance Nodes currently. (Probably error?)" << std::endl;
     auto test_evaluator =
       std::make_shared<open_spiel::algorithms::RandomRolloutEvaluator>(
           /*rollout_count*/10, /*seed*/0);
@@ -106,8 +107,10 @@ VPNetModel::InferenceOutputs VPNetEvaluator::Inference(const State& state) {
   VPNetModel::InferenceInputs inputs = {state.LegalActions(),
                                         state.ObservationTensor()};
 
-  // TODO: test if ObservationTensor changes perspective
-  std::cout << "ObservationTensor " << state.ObservationTensor() << std::endl;
+  // DONE: test if ObservationTensor changes perspective
+  // - It does not (at least for Tic Tac Toe)
+  //std::cout << "ObservationTensor " << state.ObservationTensor() << std::endl;
+
   uint64_t key;
   int cache_shard;
   if (!cache_.empty()) {

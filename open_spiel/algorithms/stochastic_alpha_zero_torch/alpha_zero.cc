@@ -110,6 +110,16 @@ Trajectory PlayGame(Logger* logger, int game_num, const open_spiel::Game& game,
   Trajectory trajectory;
 
   while (true) {
+    if (state->IsChanceNode()) {
+      // Chance node; sample one according to underlying distribution.
+      std::vector<std::pair<open_spiel::Action, double>> outcomes =
+          state->ChanceOutcomes();
+      open_spiel::Action action = open_spiel::SampleAction(outcomes, *rng).first;
+      std::cerr << "sampled outcome: "
+                << state->ActionToString(open_spiel::kChancePlayerId, action)
+                << std::endl;
+      state->ApplyAction(action);
+    }
     open_spiel::Player player = state->CurrentPlayer();
     std::unique_ptr<SearchNode> root = (*bots)[player]->MCTSearch(*state);
     open_spiel::ActionsAndProbs policy;
@@ -493,8 +503,9 @@ bool AlphaZero(AlphaZeroConfig config, StopToken* stop, bool resuming) {
     open_spiel::SpielFatalError("Game must have terminal rewards.");
   if (game_type.dynamics != open_spiel::GameType::Dynamics::kSequential)
     open_spiel::SpielFatalError("Game must have sequential turns.");
-  if (game_type.chance_mode != open_spiel::GameType::ChanceMode::kDeterministic)
-    open_spiel::SpielFatalError("Game must be deterministic.");
+  // TODO: look into why it cant be stochastic
+  //if (game_type.chance_mode != open_spiel::GameType::ChanceMode::kDeterministic)
+  //  open_spiel::SpielFatalError("Game must be deterministic.");
 
   file::Mkdirs(config.path);
   if (!file::IsDirectory(config.path)) {
