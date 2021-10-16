@@ -351,6 +351,7 @@ std::unique_ptr<SearchNode> MCTSBot::MCTSearch(const State& state) {
     for (auto it = visit_path.rbegin(); it != visit_path.rend(); ++it) {
       SearchNode* node = *it;
 
+      // at chance nodes, the reward is from the perspective of the root player
       node->total_reward +=
           returns[node->player == kChancePlayerId ? player_id : node->player];
       node->explore_count += 1;
