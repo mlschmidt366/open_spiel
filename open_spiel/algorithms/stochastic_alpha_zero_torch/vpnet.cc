@@ -103,7 +103,8 @@ bool CreateGraphDef(const Game& game, double learning_rate, double weight_decay,
       /*nn_width=*/nn_width,
       /*learning_rate=*/learning_rate,
       /*weight_decay=*/weight_decay};
-
+  //TODO: remove after implementing a model that can take an arbitrary tensor shape (mlp)
+  SPIEL_CHECK_EQ(game.ObservationTensorShape().size(), 3);
   return SaveModelConfig(path, filename, net_config);
 }
 

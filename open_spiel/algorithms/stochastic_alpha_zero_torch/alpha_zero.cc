@@ -110,39 +110,41 @@ Trajectory PlayGame(Logger* logger, int game_num, const open_spiel::Game& game,
   Trajectory trajectory;
 
   while (true) {
+    open_spiel::Player player = state->CurrentPlayer();
+    open_spiel::Action action;
+    // TODO: can be left like this? root_value is only used in the cutoff_value
+    // so for now it needs to be make sure that initialized value < cutoff_value
+    double root_value = 0;
     if (state->IsChanceNode()) {
       // Chance node; sample one according to underlying distribution.
       std::vector<std::pair<open_spiel::Action, double>> outcomes =
           state->ChanceOutcomes();
-      open_spiel::Action action = open_spiel::SampleAction(outcomes, *rng).first;
-      std::cerr << "sampled outcome: "
-                << state->ActionToString(open_spiel::kChancePlayerId, action)
-                << std::endl;
-      state->ApplyAction(action);
+      action = open_spiel::SampleAction(outcomes, *rng).first;
     }
-    open_spiel::Player player = state->CurrentPlayer();
-    std::unique_ptr<SearchNode> root = (*bots)[player]->MCTSearch(*state);
-    open_spiel::ActionsAndProbs policy;
-    policy.reserve(root->children.size());
-    for (const SearchNode& c : root->children) {
-      policy.emplace_back(c.action,
-                          std::pow(c.explore_count, 1.0 / temperature));
-    }
-    NormalizePolicy(&policy);
-    open_spiel::Action action;
-    if (history.size() >= temperature_drop) {
-      action = root->BestChild().action;
-    } else {
-      action = open_spiel::SampleAction(policy, *rng).first;
-    }
+    else {
+      std::unique_ptr<SearchNode> root = (*bots)[player]->MCTSearch(*state);
+      open_spiel::ActionsAndProbs policy;
+      policy.reserve(root->children.size());
+      for (const SearchNode& c : root->children) {
+        policy.emplace_back(c.action,
+                            std::pow(c.explore_count, 1.0 / temperature));
+      }
+      NormalizePolicy(&policy);
+      if (history.size() >= temperature_drop) {
+        action = root->BestChild().action;
+      } else {
+        action = open_spiel::SampleAction(policy, *rng).first;
+      }
 
-    double root_value = root->total_reward / root->explore_count;
-    trajectory.states.push_back(Trajectory::State{
-        state->ObservationTensor(), player, state->LegalActions(), action,
-        std::move(policy), root_value});
+      root_value = root->total_reward / root->explore_count;
+      trajectory.states.push_back(Trajectory::State{
+          state->ObservationTensor(), player, state->LegalActions(), action,
+          std::move(policy), root_value});
+    }
     std::string action_str = state->ActionToString(player, action);
     history.push_back(action_str);
     state->ApplyAction(action);
+
     if (verbose) {
       logger->Print("Player: %d, action: %s", player, action_str);
     }
@@ -504,7 +506,8 @@ bool AlphaZero(AlphaZeroConfig config, StopToken* stop, bool resuming) {
   if (game_type.dynamics != open_spiel::GameType::Dynamics::kSequential)
     open_spiel::SpielFatalError("Game must have sequential turns.");
   // TODO: look into why it cant be stochastic
-  //if (game_type.chance_mode != open_spiel::GameType::ChanceMode::kDeterministic)
+  if (game_type.chance_mode != open_spiel::GameType::ChanceMode::kDeterministic)
+    std::cout << "The game is not deterministic!" << std::endl;
   //  open_spiel::SpielFatalError("Game must be deterministic.");
 
   file::Mkdirs(config.path);

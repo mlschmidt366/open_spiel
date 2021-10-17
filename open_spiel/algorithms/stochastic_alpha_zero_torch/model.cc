@@ -38,10 +38,12 @@ std::istream& operator>>(std::istream& stream, ModelConfig& config) {
   return stream;
 }
 
+// TODO maybe the observation tensor shape does not have 3 entries
+// add support for that too
 std::ostream& operator<<(std::ostream& stream, const ModelConfig& config) {
   stream << config.observation_tensor_shape[0] << " "
          << config.observation_tensor_shape[1] << " "
-         << config.observation_tensor_shape[2] << " "
+         << config.observation_tensor_shape[2] << std::endl
          << config.number_of_actions << " " << config.nn_depth << " "
          << config.nn_width << " " << config.learning_rate << " "
          << config.weight_decay;

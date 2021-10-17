@@ -33,7 +33,7 @@ constexpr int kDefaultDiceOutcomes = 6;
 constexpr int kDefaultHorizon = 1000;
 constexpr int kDefaultPlayers = 2;
 constexpr int kDefaultWinScore = 15;
-inline constexpr const char* kDefaultObservationEncoding = "value";
+inline constexpr const char* kDefaultObservationEncoding = "one_hot";
 
 // Facts about the game
 const GameType kGameType{
@@ -127,10 +127,10 @@ std::string TinyCantStopState::ObservationString(Player player) const {
 std::vector<int> TinyCantStopGame::ObservationTensorShape() const {
   switch (observation_encoding_) {
     case ObservationEncoding::kValue:
-      return {1 + num_players_};
+      return {1 + num_players_, 1, 1};
 
     case ObservationEncoding::kOneHot:
-      return {1 + num_players_, win_score_ + 1};
+      return {1 + num_players_, win_score_ + 1, 1};
 
     default:
       SpielFatalError("Unknown observation_encoding_");
