@@ -104,6 +104,7 @@ open_spiel::ActionsAndProbs VPNetEvaluator::Prior(const State& state) {
   if (state.IsChanceNode()) {
     return state.ChanceOutcomes();
   } else {
+    // the state is from the perspective of the current player
     return Inference(state).policy;
   }
 }

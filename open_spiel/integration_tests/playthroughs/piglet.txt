@@ -1,0 +1,1809 @@
+game: piglet
+
+GameType.chance_mode = ChanceMode.EXPLICIT_STOCHASTIC
+GameType.dynamics = Dynamics.SEQUENTIAL
+GameType.information = Information.PERFECT_INFORMATION
+GameType.long_name = "Piglet"
+GameType.max_num_players = 10
+GameType.min_num_players = 2
+GameType.parameter_specification = ["horizon", "jeopardyprob", "observationencoding", "players", "winscore"]
+GameType.provides_information_state_string = False
+GameType.provides_information_state_tensor = False
+GameType.provides_observation_string = True
+GameType.provides_observation_tensor = True
+GameType.provides_factored_observation_string = False
+GameType.reward_model = RewardModel.TERMINAL
+GameType.short_name = "piglet"
+GameType.utility = Utility.ZERO_SUM
+
+NumDistinctActions() = 2
+PolicyTensorShape() = [2]
+MaxChanceOutcomes() = 2
+GetParameters() = {horizon=400,jeopardyprob=0.5,observationencoding=one_hot,players=2,winscore=10}
+NumPlayers() = 2
+MinUtility() = -1.0
+MaxUtility() = 1.0
+UtilitySum() = 0.0
+ObservationTensorShape() = [3, 11, 1]
+ObservationTensorLayout() = TensorLayout.CHW
+ObservationTensorSize() = 33
+MaxGameLength() = 400
+ToString() = "piglet()"
+
+# State 0
+# Scores: 0 0, Turn total: 0
+# Current player: 0
+IsTerminal() = False
+History() = []
+HistoryString() = ""
+IsChanceNode() = False
+IsSimultaneousNode() = False
+CurrentPlayer() = 0
+ObservationString(0) = "Scores: 0 0, Turn total: 0\nCurrent player: 0\n"
+ObservationString(1) = "Scores: 0 0, Turn total: 0\nCurrent player: 0\n"
+ObservationTensor(0):
+◉  ◉  ◉
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+ObservationTensor(1):
+◉  ◉  ◉
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+Rewards() = [0.0, 0.0]
+Returns() = [0.0, 0.0]
+LegalActions() = [0, 1]
+StringLegalActions() = ["roll", "stop"]
+
+# Apply action "roll"
+action: 0
+
+# State 1
+# Scores: 0 0, Turn total: 0
+# Current player: 0 (rolling)
+IsTerminal() = False
+History() = [0]
+HistoryString() = "0"
+IsChanceNode() = True
+IsSimultaneousNode() = False
+CurrentPlayer() = -1
+ObservationString(0) = "Scores: 0 0, Turn total: 0\nCurrent player: 0 (rolling)\n"
+ObservationString(1) = "Scores: 0 0, Turn total: 0\nCurrent player: 0 (rolling)\n"
+ObservationTensor(0):
+◉  ◉  ◉
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+ObservationTensor(1):
+◉  ◉  ◉
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+ChanceOutcomes() = [(0, 0.5), (1, 0.5)]
+LegalActions() = [0, 1]
+StringLegalActions() = ["Roll 0", "Roll 1"]
+
+# Apply action "Roll 0"
+action: 0
+
+# State 2
+# Scores: 0 0, Turn total: 0
+# Current player: 1
+IsTerminal() = False
+History() = [0, 0]
+HistoryString() = "0, 0"
+IsChanceNode() = False
+IsSimultaneousNode() = False
+CurrentPlayer() = 1
+ObservationString(0) = "Scores: 0 0, Turn total: 0\nCurrent player: 1\n"
+ObservationString(1) = "Scores: 0 0, Turn total: 0\nCurrent player: 1\n"
+ObservationTensor(0):
+◉  ◉  ◉
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+ObservationTensor(1):
+◉  ◉  ◉
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+Rewards() = [0.0, 0.0]
+Returns() = [0.0, 0.0]
+LegalActions() = [0, 1]
+StringLegalActions() = ["roll", "stop"]
+
+# Apply action "roll"
+action: 0
+
+# State 3
+# Scores: 0 0, Turn total: 0
+# Current player: 1 (rolling)
+IsTerminal() = False
+History() = [0, 0, 0]
+HistoryString() = "0, 0, 0"
+IsChanceNode() = True
+IsSimultaneousNode() = False
+CurrentPlayer() = -1
+ObservationString(0) = "Scores: 0 0, Turn total: 0\nCurrent player: 1 (rolling)\n"
+ObservationString(1) = "Scores: 0 0, Turn total: 0\nCurrent player: 1 (rolling)\n"
+ObservationTensor(0):
+◉  ◉  ◉
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+ObservationTensor(1):
+◉  ◉  ◉
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+ChanceOutcomes() = [(0, 0.5), (1, 0.5)]
+LegalActions() = [0, 1]
+StringLegalActions() = ["Roll 0", "Roll 1"]
+
+# Apply action "Roll 0"
+action: 0
+
+# State 4
+# Scores: 0 0, Turn total: 0
+# Current player: 0
+IsTerminal() = False
+History() = [0, 0, 0, 0]
+HistoryString() = "0, 0, 0, 0"
+IsChanceNode() = False
+IsSimultaneousNode() = False
+CurrentPlayer() = 0
+ObservationString(0) = "Scores: 0 0, Turn total: 0\nCurrent player: 0\n"
+ObservationString(1) = "Scores: 0 0, Turn total: 0\nCurrent player: 0\n"
+ObservationTensor(0):
+◉  ◉  ◉
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+ObservationTensor(1):
+◉  ◉  ◉
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+Rewards() = [0.0, 0.0]
+Returns() = [0.0, 0.0]
+LegalActions() = [0, 1]
+StringLegalActions() = ["roll", "stop"]
+
+# Apply action "roll"
+action: 0
+
+# State 5
+# Apply action "Roll 0"
+action: 0
+
+# State 6
+# Scores: 0 0, Turn total: 0
+# Current player: 1
+IsTerminal() = False
+History() = [0, 0, 0, 0, 0, 0]
+HistoryString() = "0, 0, 0, 0, 0, 0"
+IsChanceNode() = False
+IsSimultaneousNode() = False
+CurrentPlayer() = 1
+ObservationString(0) = "Scores: 0 0, Turn total: 0\nCurrent player: 1\n"
+ObservationString(1) = "Scores: 0 0, Turn total: 0\nCurrent player: 1\n"
+ObservationTensor(0):
+◉  ◉  ◉
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+ObservationTensor(1):
+◉  ◉  ◉
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+Rewards() = [0.0, 0.0]
+Returns() = [0.0, 0.0]
+LegalActions() = [0, 1]
+StringLegalActions() = ["roll", "stop"]
+
+# Apply action "roll"
+action: 0
+
+# State 7
+# Apply action "Roll 0"
+action: 0
+
+# State 8
+# Scores: 0 0, Turn total: 0
+# Current player: 0
+IsTerminal() = False
+History() = [0, 0, 0, 0, 0, 0, 0, 0]
+HistoryString() = "0, 0, 0, 0, 0, 0, 0, 0"
+IsChanceNode() = False
+IsSimultaneousNode() = False
+CurrentPlayer() = 0
+ObservationString(0) = "Scores: 0 0, Turn total: 0\nCurrent player: 0\n"
+ObservationString(1) = "Scores: 0 0, Turn total: 0\nCurrent player: 0\n"
+ObservationTensor(0):
+◉  ◉  ◉
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+ObservationTensor(1):
+◉  ◉  ◉
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+Rewards() = [0.0, 0.0]
+Returns() = [0.0, 0.0]
+LegalActions() = [0, 1]
+StringLegalActions() = ["roll", "stop"]
+
+# Apply action "roll"
+action: 0
+
+# State 9
+# Apply action "Roll 0"
+action: 0
+
+# State 10
+# Scores: 0 0, Turn total: 0
+# Current player: 1
+IsTerminal() = False
+History() = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+HistoryString() = "0, 0, 0, 0, 0, 0, 0, 0, 0, 0"
+IsChanceNode() = False
+IsSimultaneousNode() = False
+CurrentPlayer() = 1
+ObservationString(0) = "Scores: 0 0, Turn total: 0\nCurrent player: 1\n"
+ObservationString(1) = "Scores: 0 0, Turn total: 0\nCurrent player: 1\n"
+ObservationTensor(0):
+◉  ◉  ◉
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+ObservationTensor(1):
+◉  ◉  ◉
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+Rewards() = [0.0, 0.0]
+Returns() = [0.0, 0.0]
+LegalActions() = [0, 1]
+StringLegalActions() = ["roll", "stop"]
+
+# Apply action "roll"
+action: 0
+
+# State 11
+# Apply action "Roll 0"
+action: 0
+
+# State 12
+# Apply action "stop"
+action: 1
+
+# State 13
+# Apply action "stop"
+action: 1
+
+# State 14
+# Apply action "roll"
+action: 0
+
+# State 15
+# Apply action "Roll 1"
+action: 1
+
+# State 16
+# Apply action "roll"
+action: 0
+
+# State 17
+# Apply action "Roll 0"
+action: 0
+
+# State 18
+# Apply action "roll"
+action: 0
+
+# State 19
+# Apply action "Roll 0"
+action: 0
+
+# State 20
+# Apply action "roll"
+action: 0
+
+# State 21
+# Apply action "Roll 1"
+action: 1
+
+# State 22
+# Apply action "stop"
+action: 1
+
+# State 23
+# Apply action "stop"
+action: 1
+
+# State 24
+# Apply action "stop"
+action: 1
+
+# State 25
+# Apply action "roll"
+action: 0
+
+# State 26
+# Apply action "Roll 1"
+action: 1
+
+# State 27
+# Apply action "roll"
+action: 0
+
+# State 28
+# Apply action "Roll 1"
+action: 1
+
+# State 29
+# Apply action "roll"
+action: 0
+
+# State 30
+# Apply action "Roll 1"
+action: 1
+
+# State 31
+# Apply action "stop"
+action: 1
+
+# State 32
+# Apply action "stop"
+action: 1
+
+# State 33
+# Scores: 1 3, Turn total: 0
+# Current player: 1
+IsTerminal() = False
+History() = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1]
+HistoryString() = "0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1"
+IsChanceNode() = False
+IsSimultaneousNode() = False
+CurrentPlayer() = 1
+ObservationString(0) = "Scores: 1 3, Turn total: 0\nCurrent player: 1\n"
+ObservationString(1) = "Scores: 1 3, Turn total: 0\nCurrent player: 1\n"
+ObservationTensor(0):
+◉  ◯  ◯
+◯  ◯  ◉
+◯  ◯  ◯
+◯  ◉  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+ObservationTensor(1):
+◉  ◯  ◯
+◯  ◯  ◉
+◯  ◯  ◯
+◯  ◉  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+Rewards() = [0.0, 0.0]
+Returns() = [0.0, 0.0]
+LegalActions() = [0, 1]
+StringLegalActions() = ["roll", "stop"]
+
+# Apply action "roll"
+action: 0
+
+# State 34
+# Apply action "Roll 0"
+action: 0
+
+# State 35
+# Scores: 1 3, Turn total: 0
+# Current player: 0
+IsTerminal() = False
+History() = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 0]
+HistoryString() = "0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 0"
+IsChanceNode() = False
+IsSimultaneousNode() = False
+CurrentPlayer() = 0
+ObservationString(0) = "Scores: 1 3, Turn total: 0\nCurrent player: 0\n"
+ObservationString(1) = "Scores: 1 3, Turn total: 0\nCurrent player: 0\n"
+ObservationTensor(0):
+◉  ◯  ◯
+◯  ◉  ◯
+◯  ◯  ◯
+◯  ◯  ◉
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+ObservationTensor(1):
+◉  ◯  ◯
+◯  ◉  ◯
+◯  ◯  ◯
+◯  ◯  ◉
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+Rewards() = [0.0, 0.0]
+Returns() = [0.0, 0.0]
+LegalActions() = [0, 1]
+StringLegalActions() = ["roll", "stop"]
+
+# Apply action "roll"
+action: 0
+
+# State 36
+# Apply action "Roll 0"
+action: 0
+
+# State 37
+# Apply action "roll"
+action: 0
+
+# State 38
+# Apply action "Roll 1"
+action: 1
+
+# State 39
+# Apply action "roll"
+action: 0
+
+# State 40
+# Apply action "Roll 1"
+action: 1
+
+# State 41
+# Apply action "roll"
+action: 0
+
+# State 42
+# Apply action "Roll 1"
+action: 1
+
+# State 43
+# Apply action "roll"
+action: 0
+
+# State 44
+# Apply action "Roll 0"
+action: 0
+
+# State 45
+# Apply action "stop"
+action: 1
+
+# State 46
+# Apply action "roll"
+action: 0
+
+# State 47
+# Apply action "Roll 0"
+action: 0
+
+# State 48
+# Apply action "stop"
+action: 1
+
+# State 49
+# Apply action "stop"
+action: 1
+
+# State 50
+# Apply action "stop"
+action: 1
+
+# State 51
+# Apply action "roll"
+action: 0
+
+# State 52
+# Apply action "Roll 0"
+action: 0
+
+# State 53
+# Apply action "roll"
+action: 0
+
+# State 54
+# Apply action "Roll 1"
+action: 1
+
+# State 55
+# Apply action "roll"
+action: 0
+
+# State 56
+# Apply action "Roll 0"
+action: 0
+
+# State 57
+# Apply action "stop"
+action: 1
+
+# State 58
+# Apply action "stop"
+action: 1
+
+# State 59
+# Apply action "roll"
+action: 0
+
+# State 60
+# Apply action "Roll 0"
+action: 0
+
+# State 61
+# Apply action "roll"
+action: 0
+
+# State 62
+# Apply action "Roll 1"
+action: 1
+
+# State 63
+# Apply action "stop"
+action: 1
+
+# State 64
+# Scores: 2 3, Turn total: 0
+# Current player: 1
+IsTerminal() = False
+History() = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 1]
+HistoryString() = "0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 1"
+IsChanceNode() = False
+IsSimultaneousNode() = False
+CurrentPlayer() = 1
+ObservationString(0) = "Scores: 2 3, Turn total: 0\nCurrent player: 1\n"
+ObservationString(1) = "Scores: 2 3, Turn total: 0\nCurrent player: 1\n"
+ObservationTensor(0):
+◉  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◉
+◯  ◉  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+ObservationTensor(1):
+◉  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◉
+◯  ◉  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+Rewards() = [0.0, 0.0]
+Returns() = [0.0, 0.0]
+LegalActions() = [0, 1]
+StringLegalActions() = ["roll", "stop"]
+
+# Apply action "stop"
+action: 1
+
+# State 65
+# Apply action "stop"
+action: 1
+
+# State 66
+# Apply action "roll"
+action: 0
+
+# State 67
+# Apply action "Roll 0"
+action: 0
+
+# State 68
+# Scores: 2 3, Turn total: 0
+# Current player: 0
+IsTerminal() = False
+History() = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0]
+HistoryString() = "0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0"
+IsChanceNode() = False
+IsSimultaneousNode() = False
+CurrentPlayer() = 0
+ObservationString(0) = "Scores: 2 3, Turn total: 0\nCurrent player: 0\n"
+ObservationString(1) = "Scores: 2 3, Turn total: 0\nCurrent player: 0\n"
+ObservationTensor(0):
+◉  ◯  ◯
+◯  ◯  ◯
+◯  ◉  ◯
+◯  ◯  ◉
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+ObservationTensor(1):
+◉  ◯  ◯
+◯  ◯  ◯
+◯  ◉  ◯
+◯  ◯  ◉
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+Rewards() = [0.0, 0.0]
+Returns() = [0.0, 0.0]
+LegalActions() = [0, 1]
+StringLegalActions() = ["roll", "stop"]
+
+# Apply action "roll"
+action: 0
+
+# State 69
+# Apply action "Roll 1"
+action: 1
+
+# State 70
+# Apply action "roll"
+action: 0
+
+# State 71
+# Apply action "Roll 0"
+action: 0
+
+# State 72
+# Apply action "roll"
+action: 0
+
+# State 73
+# Apply action "Roll 1"
+action: 1
+
+# State 74
+# Apply action "roll"
+action: 0
+
+# State 75
+# Apply action "Roll 1"
+action: 1
+
+# State 76
+# Apply action "stop"
+action: 1
+
+# State 77
+# Apply action "roll"
+action: 0
+
+# State 78
+# Apply action "Roll 0"
+action: 0
+
+# State 79
+# Apply action "stop"
+action: 1
+
+# State 80
+# Apply action "stop"
+action: 1
+
+# State 81
+# Apply action "stop"
+action: 1
+
+# State 82
+# Apply action "roll"
+action: 0
+
+# State 83
+# Apply action "Roll 1"
+action: 1
+
+# State 84
+# Apply action "stop"
+action: 1
+
+# State 85
+# Apply action "stop"
+action: 1
+
+# State 86
+# Apply action "roll"
+action: 0
+
+# State 87
+# Apply action "Roll 0"
+action: 0
+
+# State 88
+# Apply action "roll"
+action: 0
+
+# State 89
+# Apply action "Roll 1"
+action: 1
+
+# State 90
+# Apply action "roll"
+action: 0
+
+# State 91
+# Apply action "Roll 0"
+action: 0
+
+# State 92
+# Apply action "stop"
+action: 1
+
+# State 93
+# Scores: 3 5, Turn total: 0
+# Current player: 1
+IsTerminal() = False
+History() = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 1]
+HistoryString() = "0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 1"
+IsChanceNode() = False
+IsSimultaneousNode() = False
+CurrentPlayer() = 1
+ObservationString(0) = "Scores: 3 5, Turn total: 0\nCurrent player: 1\n"
+ObservationString(1) = "Scores: 3 5, Turn total: 0\nCurrent player: 1\n"
+ObservationTensor(0):
+◉  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◉
+◯  ◯  ◯
+◯  ◉  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+ObservationTensor(1):
+◉  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◉
+◯  ◯  ◯
+◯  ◉  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+Rewards() = [0.0, 0.0]
+Returns() = [0.0, 0.0]
+LegalActions() = [0, 1]
+StringLegalActions() = ["roll", "stop"]
+
+# Apply action "roll"
+action: 0
+
+# State 94
+# Apply action "Roll 0"
+action: 0
+
+# State 95
+# Apply action "roll"
+action: 0
+
+# State 96
+# Apply action "Roll 1"
+action: 1
+
+# State 97
+# Apply action "stop"
+action: 1
+
+# State 98
+# Apply action "roll"
+action: 0
+
+# State 99
+# Apply action "Roll 1"
+action: 1
+
+# State 100
+# Apply action "roll"
+action: 0
+
+# State 101
+# Apply action "Roll 1"
+action: 1
+
+# State 102
+# Apply action "roll"
+action: 0
+
+# State 103
+# Apply action "Roll 0"
+action: 0
+
+# State 104
+# Scores: 4 5, Turn total: 0
+# Current player: 0
+IsTerminal() = False
+History() = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 0]
+HistoryString() = "0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 0"
+IsChanceNode() = False
+IsSimultaneousNode() = False
+CurrentPlayer() = 0
+ObservationString(0) = "Scores: 4 5, Turn total: 0\nCurrent player: 0\n"
+ObservationString(1) = "Scores: 4 5, Turn total: 0\nCurrent player: 0\n"
+ObservationTensor(0):
+◉  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◉  ◯
+◯  ◯  ◉
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+ObservationTensor(1):
+◉  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◉  ◯
+◯  ◯  ◉
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+Rewards() = [0.0, 0.0]
+Returns() = [0.0, 0.0]
+LegalActions() = [0, 1]
+StringLegalActions() = ["roll", "stop"]
+
+# Apply action "stop"
+action: 1
+
+# State 105
+# Apply action "stop"
+action: 1
+
+# State 106
+# Apply action "roll"
+action: 0
+
+# State 107
+# Apply action "Roll 0"
+action: 0
+
+# State 108
+# Apply action "stop"
+action: 1
+
+# State 109
+# Apply action "stop"
+action: 1
+
+# State 110
+# Apply action "roll"
+action: 0
+
+# State 111
+# Apply action "Roll 0"
+action: 0
+
+# State 112
+# Apply action "stop"
+action: 1
+
+# State 113
+# Apply action "stop"
+action: 1
+
+# State 114
+# Apply action "roll"
+action: 0
+
+# State 115
+# Apply action "Roll 1"
+action: 1
+
+# State 116
+# Apply action "stop"
+action: 1
+
+# State 117
+# Apply action "stop"
+action: 1
+
+# State 118
+# Apply action "stop"
+action: 1
+
+# State 119
+# Apply action "stop"
+action: 1
+
+# State 120
+# Apply action "stop"
+action: 1
+
+# State 121
+# Scores: 5 5, Turn total: 0
+# Current player: 1
+IsTerminal() = False
+History() = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1]
+HistoryString() = "0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1"
+IsChanceNode() = False
+IsSimultaneousNode() = False
+CurrentPlayer() = 1
+ObservationString(0) = "Scores: 5 5, Turn total: 0\nCurrent player: 1\n"
+ObservationString(1) = "Scores: 5 5, Turn total: 0\nCurrent player: 1\n"
+ObservationTensor(0):
+◉  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◉  ◉
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+ObservationTensor(1):
+◉  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◉  ◉
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+Rewards() = [0.0, 0.0]
+Returns() = [0.0, 0.0]
+LegalActions() = [0, 1]
+StringLegalActions() = ["roll", "stop"]
+
+# Apply action "roll"
+action: 0
+
+# State 122
+# Apply action "Roll 0"
+action: 0
+
+# State 123
+# Apply action "stop"
+action: 1
+
+# State 124
+# Apply action "roll"
+action: 0
+
+# State 125
+# Apply action "Roll 0"
+action: 0
+
+# State 126
+# Apply action "roll"
+action: 0
+
+# State 127
+# Apply action "Roll 0"
+action: 0
+
+# State 128
+# Apply action "roll"
+action: 0
+
+# State 129
+# Apply action "Roll 1"
+action: 1
+
+# State 130
+# Apply action "roll"
+action: 0
+
+# State 131
+# Apply action "Roll 0"
+action: 0
+
+# State 132
+# Scores: 5 5, Turn total: 0
+# Current player: 0
+IsTerminal() = False
+History() = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0]
+HistoryString() = "0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0"
+IsChanceNode() = False
+IsSimultaneousNode() = False
+CurrentPlayer() = 0
+ObservationString(0) = "Scores: 5 5, Turn total: 0\nCurrent player: 0\n"
+ObservationString(1) = "Scores: 5 5, Turn total: 0\nCurrent player: 0\n"
+ObservationTensor(0):
+◉  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◉  ◉
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+ObservationTensor(1):
+◉  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◉  ◉
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+Rewards() = [0.0, 0.0]
+Returns() = [0.0, 0.0]
+LegalActions() = [0, 1]
+StringLegalActions() = ["roll", "stop"]
+
+# Apply action "stop"
+action: 1
+
+# State 133
+# Apply action "roll"
+action: 0
+
+# State 134
+# Apply action "Roll 1"
+action: 1
+
+# State 135
+# Apply action "roll"
+action: 0
+
+# State 136
+# Apply action "Roll 0"
+action: 0
+
+# State 137
+# Apply action "roll"
+action: 0
+
+# State 138
+# Apply action "Roll 1"
+action: 1
+
+# State 139
+# Apply action "roll"
+action: 0
+
+# State 140
+# Apply action "Roll 0"
+action: 0
+
+# State 141
+# Apply action "stop"
+action: 1
+
+# State 142
+# Apply action "stop"
+action: 1
+
+# State 143
+# Apply action "roll"
+action: 0
+
+# State 144
+# Apply action "Roll 0"
+action: 0
+
+# State 145
+# Apply action "roll"
+action: 0
+
+# State 146
+# Apply action "Roll 0"
+action: 0
+
+# State 147
+# Apply action "roll"
+action: 0
+
+# State 148
+# Apply action "Roll 0"
+action: 0
+
+# State 149
+# Apply action "stop"
+action: 1
+
+# State 150
+# Apply action "stop"
+action: 1
+
+# State 151
+# Apply action "roll"
+action: 0
+
+# State 152
+# Apply action "Roll 0"
+action: 0
+
+# State 153
+# Scores: 5 5, Turn total: 0
+# Current player: 1
+IsTerminal() = False
+History() = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0]
+HistoryString() = "0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0"
+IsChanceNode() = False
+IsSimultaneousNode() = False
+CurrentPlayer() = 1
+ObservationString(0) = "Scores: 5 5, Turn total: 0\nCurrent player: 1\n"
+ObservationString(1) = "Scores: 5 5, Turn total: 0\nCurrent player: 1\n"
+ObservationTensor(0):
+◉  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◉  ◉
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+ObservationTensor(1):
+◉  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◉  ◉
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+Rewards() = [0.0, 0.0]
+Returns() = [0.0, 0.0]
+LegalActions() = [0, 1]
+StringLegalActions() = ["roll", "stop"]
+
+# Apply action "stop"
+action: 1
+
+# State 154
+# Apply action "stop"
+action: 1
+
+# State 155
+# Apply action "stop"
+action: 1
+
+# State 156
+# Apply action "stop"
+action: 1
+
+# State 157
+# Apply action "stop"
+action: 1
+
+# State 158
+# Apply action "stop"
+action: 1
+
+# State 159
+# Apply action "roll"
+action: 0
+
+# State 160
+# Apply action "Roll 1"
+action: 1
+
+# State 161
+# Apply action "roll"
+action: 0
+
+# State 162
+# Apply action "Roll 1"
+action: 1
+
+# State 163
+# Apply action "stop"
+action: 1
+
+# State 164
+# Scores: 5 7, Turn total: 0
+# Current player: 0
+IsTerminal() = False
+History() = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1]
+HistoryString() = "0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1"
+IsChanceNode() = False
+IsSimultaneousNode() = False
+CurrentPlayer() = 0
+ObservationString(0) = "Scores: 5 7, Turn total: 0\nCurrent player: 0\n"
+ObservationString(1) = "Scores: 5 7, Turn total: 0\nCurrent player: 0\n"
+ObservationTensor(0):
+◉  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◉  ◯
+◯  ◯  ◯
+◯  ◯  ◉
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+ObservationTensor(1):
+◉  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◉  ◯
+◯  ◯  ◯
+◯  ◯  ◉
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+Rewards() = [0.0, 0.0]
+Returns() = [0.0, 0.0]
+LegalActions() = [0, 1]
+StringLegalActions() = ["roll", "stop"]
+
+# Apply action "roll"
+action: 0
+
+# State 165
+# Apply action "Roll 1"
+action: 1
+
+# State 166
+# Apply action "stop"
+action: 1
+
+# State 167
+# Apply action "stop"
+action: 1
+
+# State 168
+# Apply action "stop"
+action: 1
+
+# State 169
+# Apply action "roll"
+action: 0
+
+# State 170
+# Apply action "Roll 0"
+action: 0
+
+# State 171
+# Apply action "stop"
+action: 1
+
+# State 172
+# Apply action "stop"
+action: 1
+
+# State 173
+# Apply action "roll"
+action: 0
+
+# State 174
+# Apply action "Roll 1"
+action: 1
+
+# State 175
+# Apply action "stop"
+action: 1
+
+# State 176
+# Apply action "roll"
+action: 0
+
+# State 177
+# Apply action "Roll 0"
+action: 0
+
+# State 178
+# Apply action "roll"
+action: 0
+
+# State 179
+# Apply action "Roll 1"
+action: 1
+
+# State 180
+# Apply action "stop"
+action: 1
+
+# State 181
+# Scores: 8 7, Turn total: 0
+# Current player: 1
+IsTerminal() = False
+History() = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 0, 1, 1, 1, 1, 0, 0, 1, 1, 0, 1, 1, 0, 0, 0, 1, 1]
+HistoryString() = "0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 0, 1, 1, 1, 1, 0, 0, 1, 1, 0, 1, 1, 0, 0, 0, 1, 1"
+IsChanceNode() = False
+IsSimultaneousNode() = False
+CurrentPlayer() = 1
+ObservationString(0) = "Scores: 8 7, Turn total: 0\nCurrent player: 1\n"
+ObservationString(1) = "Scores: 8 7, Turn total: 0\nCurrent player: 1\n"
+ObservationTensor(0):
+◉  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◉  ◯
+◯  ◯  ◉
+◯  ◯  ◯
+◯  ◯  ◯
+ObservationTensor(1):
+◉  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◉  ◯
+◯  ◯  ◉
+◯  ◯  ◯
+◯  ◯  ◯
+Rewards() = [0.0, 0.0]
+Returns() = [0.0, 0.0]
+LegalActions() = [0, 1]
+StringLegalActions() = ["roll", "stop"]
+
+# Apply action "stop"
+action: 1
+
+# State 182
+# Apply action "stop"
+action: 1
+
+# State 183
+# Apply action "stop"
+action: 1
+
+# State 184
+# Apply action "stop"
+action: 1
+
+# State 185
+# Apply action "stop"
+action: 1
+
+# State 186
+# Scores: 8 7, Turn total: 0
+# Current player: 0
+IsTerminal() = False
+History() = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 0, 1, 1, 1, 1, 0, 0, 1, 1, 0, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1]
+HistoryString() = "0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 0, 1, 1, 1, 1, 0, 0, 1, 1, 0, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1"
+IsChanceNode() = False
+IsSimultaneousNode() = False
+CurrentPlayer() = 0
+ObservationString(0) = "Scores: 8 7, Turn total: 0\nCurrent player: 0\n"
+ObservationString(1) = "Scores: 8 7, Turn total: 0\nCurrent player: 0\n"
+ObservationTensor(0):
+◉  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◉
+◯  ◉  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+ObservationTensor(1):
+◉  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◉
+◯  ◉  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+Rewards() = [0.0, 0.0]
+Returns() = [0.0, 0.0]
+LegalActions() = [0, 1]
+StringLegalActions() = ["roll", "stop"]
+
+# Apply action "stop"
+action: 1
+
+# State 187
+# Apply action "stop"
+action: 1
+
+# State 188
+# Apply action "roll"
+action: 0
+
+# State 189
+# Apply action "Roll 1"
+action: 1
+
+# State 190
+# Apply action "stop"
+action: 1
+
+# State 191
+# Apply action "stop"
+action: 1
+
+# State 192
+# Apply action "roll"
+action: 0
+
+# State 193
+# Apply action "Roll 0"
+action: 0
+
+# State 194
+# Apply action "roll"
+action: 0
+
+# State 195
+# Apply action "Roll 0"
+action: 0
+
+# State 196
+# Apply action "stop"
+action: 1
+
+# State 197
+# Apply action "roll"
+action: 0
+
+# State 198
+# Apply action "Roll 0"
+action: 0
+
+# State 199
+# Apply action "stop"
+action: 1
+
+# State 200
+# Apply action "stop"
+action: 1
+
+# State 201
+# Apply action "roll"
+action: 0
+
+# State 202
+# Apply action "Roll 0"
+action: 0
+
+# State 203
+# Apply action "stop"
+action: 1
+
+# State 204
+# Apply action "stop"
+action: 1
+
+# State 205
+# Apply action "roll"
+action: 0
+
+# State 206
+# Apply action "Roll 1"
+action: 1
+
+# State 207
+# Scores: 9 7, Turn total: 1
+# Current player: 1
+IsTerminal() = False
+History() = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 0, 1, 1, 1, 1, 0, 0, 1, 1, 0, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 1]
+HistoryString() = "0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 0, 1, 1, 1, 1, 0, 0, 1, 1, 0, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 1"
+IsChanceNode() = False
+IsSimultaneousNode() = False
+CurrentPlayer() = 1
+ObservationString(0) = "Scores: 9 7, Turn total: 1\nCurrent player: 1\n"
+ObservationString(1) = "Scores: 9 7, Turn total: 1\nCurrent player: 1\n"
+ObservationTensor(0):
+◯  ◯  ◯
+◉  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◉  ◯
+◯  ◯  ◯
+◯  ◯  ◉
+◯  ◯  ◯
+ObservationTensor(1):
+◯  ◯  ◯
+◉  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◉  ◯
+◯  ◯  ◯
+◯  ◯  ◉
+◯  ◯  ◯
+Rewards() = [0.0, 0.0]
+Returns() = [0.0, 0.0]
+LegalActions() = [0, 1]
+StringLegalActions() = ["roll", "stop"]
+
+# Apply action "stop"
+action: 1
+
+# State 208
+# Apply action "stop"
+action: 1
+
+# State 209
+# Apply action "stop"
+action: 1
+
+# State 210
+# Apply action "roll"
+action: 0
+
+# State 211
+# Apply action "Roll 0"
+action: 0
+
+# State 212
+# Apply action "roll"
+action: 0
+
+# State 213
+# Apply action "Roll 1"
+action: 1
+
+# State 214
+# Apply action "stop"
+action: 1
+
+# State 215
+# Scores: 9 9, Turn total: 0
+# Current player: 0
+IsTerminal() = False
+History() = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 0, 1, 1, 1, 1, 0, 0, 1, 1, 0, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 0, 0, 0, 1, 1]
+HistoryString() = "0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 0, 1, 1, 1, 1, 0, 0, 1, 1, 0, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 0, 0, 0, 1, 1"
+IsChanceNode() = False
+IsSimultaneousNode() = False
+CurrentPlayer() = 0
+ObservationString(0) = "Scores: 9 9, Turn total: 0\nCurrent player: 0\n"
+ObservationString(1) = "Scores: 9 9, Turn total: 0\nCurrent player: 0\n"
+ObservationTensor(0):
+◉  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◉  ◉
+◯  ◯  ◯
+ObservationTensor(1):
+◉  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◉  ◉
+◯  ◯  ◯
+Rewards() = [0.0, 0.0]
+Returns() = [0.0, 0.0]
+LegalActions() = [0, 1]
+StringLegalActions() = ["roll", "stop"]
+
+# Apply action "stop"
+action: 1
+
+# State 216
+# Apply action "roll"
+action: 0
+
+# State 217
+# Apply action "Roll 0"
+action: 0
+
+# State 218
+# Apply action "roll"
+action: 0
+
+# State 219
+# Apply action "Roll 1"
+action: 1
+
+# State 220
+# Apply action "stop"
+action: 1
+
+# State 221
+# Scores: 10 9, Turn total: 0
+# Current player: 1
+IsTerminal() = True
+History() = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 0, 1, 1, 1, 1, 0, 0, 1, 1, 0, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 1]
+HistoryString() = "0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 0, 1, 1, 1, 1, 0, 0, 1, 1, 0, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 1"
+IsChanceNode() = False
+IsSimultaneousNode() = False
+CurrentPlayer() = -4
+ObservationString(0) = "Scores: 10 9, Turn total: 0\nCurrent player: 1\n"
+ObservationString(1) = "Scores: 10 9, Turn total: 0\nCurrent player: 1\n"
+ObservationTensor(0):
+◉  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◉  ◯
+◯  ◯  ◉
+ObservationTensor(1):
+◉  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◯  ◯
+◯  ◉  ◯
+◯  ◯  ◉
+Rewards() = [1.0, -1.0]
+Returns() = [1.0, -1.0]

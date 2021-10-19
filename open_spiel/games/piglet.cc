@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "open_spiel/games/tiny_cant_stop.h"
+#include "open_spiel/games/piglet.h"
 
 #include <sys/types.h>
 
@@ -22,23 +22,23 @@
 #include "open_spiel/spiel.h"
 
 namespace open_spiel {
-namespace tiny_cant_stop {
+namespace piglet {
 
 namespace {
 // Moves.
 enum ActionType { kRoll = 0, kStop = 1 };
 
 // Default parameters.
-constexpr int kDefaultDiceOutcomes = 6;
+constexpr double kDefaultJeopardyProb = 0.5; // corresponds to a fair coin being flipped
 constexpr int kDefaultHorizon = 400;
 constexpr int kDefaultPlayers = 2;
-constexpr int kDefaultWinScore = 15;
+constexpr int kDefaultWinScore = 10;
 inline constexpr const char* kDefaultObservationEncoding = "one_hot";
 
 // Facts about the game
 const GameType kGameType{
-    /*short_name=*/"tiny_cant_stop",
-    /*long_name=*/"Tiny Can't Stop",
+    /*short_name=*/"piglet",
+    /*long_name=*/"Piglet",
     GameType::Dynamics::kSequential,
     GameType::ChanceMode::kExplicitStochastic,
     GameType::Information::kPerfectInformation,
@@ -55,12 +55,12 @@ const GameType kGameType{
         {"players", GameParameter(kDefaultPlayers)},
         {"horizon", GameParameter(kDefaultHorizon)},
         {"winscore", GameParameter(kDefaultWinScore)},
-        {"diceoutcomes", GameParameter(kDefaultDiceOutcomes)},
+        {"jeopardyprob", GameParameter(kDefaultJeopardyProb)},
         {"observationencoding", GameParameter(static_cast<std::string>(kDefaultObservationEncoding))},
     }};
 
 static std::shared_ptr<const Game> Factory(const GameParameters& params) {
-  return std::shared_ptr<const Game>(new TinyCantStopGame(params));
+  return std::shared_ptr<const Game>(new PigletGame(params));
 }
 
 REGISTER_SPIEL_GAME(kGameType, Factory);
@@ -76,7 +76,7 @@ ObservationEncoding ParseObservationEncoding(const std::string& st_str) {
   }
 }
 
-std::string TinyCantStopState::ActionToString(Player player, Action move_id) const {
+std::string PigletState::ActionToString(Player player, Action move_id) const {
   if (player == kChancePlayerId) {
     return absl::StrCat("Roll ", move_id);
   } else if (move_id == kRoll) {
@@ -86,7 +86,7 @@ std::string TinyCantStopState::ActionToString(Player player, Action move_id) con
   }
 }
 
-bool TinyCantStopState::IsTerminal() const {
+bool PigletState::IsTerminal() const {
   if (total_moves_ >= horizon_) {
     return true;
   }
@@ -99,7 +99,7 @@ bool TinyCantStopState::IsTerminal() const {
   return false;
 }
 
-std::vector<double> TinyCantStopState::Returns() const {
+std::vector<double> PigletState::Returns() const {
   if (!IsTerminal()) {
     return std::vector<double>(num_players_, 0.0);
   }
@@ -118,13 +118,13 @@ std::vector<double> TinyCantStopState::Returns() const {
   return std::vector<double>(num_players_, 0.0);
 }
 
-std::string TinyCantStopState::ObservationString(Player player) const {
+std::string PigletState::ObservationString(Player player) const {
   SPIEL_CHECK_GE(player, 0);
   SPIEL_CHECK_LT(player, num_players_);
   return ToString();
 }
 
-std::vector<int> TinyCantStopGame::ObservationTensorShape() const {
+std::vector<int> PigletGame::ObservationTensorShape() const {
   switch (observation_encoding_) {
     case ObservationEncoding::kValue:
       return {1 + num_players_, 1, 1};
@@ -137,7 +137,7 @@ std::vector<int> TinyCantStopGame::ObservationTensorShape() const {
   }
 }
 
-void TinyCantStopState::ObservationTensor(Player player,
+void PigletState::ObservationTensor(Player player,
                                  absl::Span<float> values) const {
   SPIEL_CHECK_GE(player, 0);
   SPIEL_CHECK_LT(player, num_players_);
@@ -205,10 +205,10 @@ void TinyCantStopState::ObservationTensor(Player player,
   }
 }
 
-TinyCantStopState::TinyCantStopState(std::shared_ptr<const Game> game, int dice_outcomes,
+PigletState::PigletState(std::shared_ptr<const Game> game, double jeopardy_prob,
                    int horizon, int win_score, ObservationEncoding observation_encoding)
     : State(game),
-      dice_outcomes_(dice_outcomes),
+      jeopardy_prob_(jeopardy_prob),
       horizon_(horizon),
       win_score_(win_score),
       observation_encoding_(observation_encoding) {
@@ -219,11 +219,11 @@ TinyCantStopState::TinyCantStopState(std::shared_ptr<const Game> game, int dice_
   turn_total_ = 0;
 }
 
-int TinyCantStopState::CurrentPlayer() const {
+int PigletState::CurrentPlayer() const {
   return IsTerminal() ? kTerminalPlayerId : cur_player_;
 }
 
-void TinyCantStopState::DoApplyAction(Action move) {
+void PigletState::DoApplyAction(Action move) {
   // For decision node: 0 means roll, 1 means stop.
   // For chance node: outcome of the dice (0 for 1, 1 for 2+).
   if (cur_player_ >= 0 && move == kRoll) {
@@ -256,7 +256,7 @@ void TinyCantStopState::DoApplyAction(Action move) {
   }
 }
 
-std::vector<Action> TinyCantStopState::LegalActions() const {
+std::vector<Action> PigletState::LegalActions() const {
   if (IsChanceNode()) {
     return LegalChanceOutcomes();
   } else if (IsTerminal()) {
@@ -270,37 +270,37 @@ std::vector<Action> TinyCantStopState::LegalActions() const {
   }
 }
 
-std::vector<std::pair<Action, double>> TinyCantStopState::ChanceOutcomes() const {
+std::vector<std::pair<Action, double>> PigletState::ChanceOutcomes() const {
   SPIEL_CHECK_TRUE(IsChanceNode());
   std::vector<std::pair<Action, double>> outcomes;
 
-  // Chance outcomes are labelled 0 or 1, corresponding to rolling 1 or 2+.
+  // Chance outcomes are labelled 0 or 1, corresponding to tails and heads respectively.
   outcomes.reserve(2);
-  outcomes.push_back(std::make_pair(0, 1.0 / dice_outcomes_));
-  outcomes.push_back(std::make_pair(1, 1.0 - 1.0 / dice_outcomes_));
+  outcomes.push_back(std::make_pair(0, jeopardy_prob_));
+  outcomes.push_back(std::make_pair(1, 1.0 - jeopardy_prob_));
 
   return outcomes;
 }
 
-std::string TinyCantStopState::ToString() const {
+std::string PigletState::ToString() const {
   return absl::StrCat("Scores: ", absl::StrJoin(scores_, " "),
                       ", Turn total: ", turn_total_,
                       "\nCurrent player: ", turn_player_,
                       (cur_player_ == kChancePlayerId ? " (rolling)\n" : "\n"));
 }
 
-std::unique_ptr<State> TinyCantStopState::Clone() const {
-  return std::unique_ptr<State>(new TinyCantStopState(*this));
+std::unique_ptr<State> PigletState::Clone() const {
+  return std::unique_ptr<State>(new PigletState(*this));
 }
 
-TinyCantStopGame::TinyCantStopGame(const GameParameters& params)
+PigletGame::PigletGame(const GameParameters& params)
     : Game(kGameType, params),
-      dice_outcomes_(ParameterValue<int>("diceoutcomes")),
+      jeopardy_prob_(ParameterValue<double>("jeopardyprob")),
       horizon_(ParameterValue<int>("horizon")),
       num_players_(ParameterValue<int>("players")),
       win_score_(ParameterValue<int>("winscore")),
       observation_encoding_(
           ParseObservationEncoding(ParameterValue<std::string>("observationencoding"))) {}
 
-}  // namespace tiny_cant_stop
+}  // namespace piglet
 }  // namespace open_spiel
