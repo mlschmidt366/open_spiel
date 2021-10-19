@@ -131,17 +131,33 @@ PlayGame(const open_spiel::Game &game,
 
   while (!state->IsTerminal()) {
     open_spiel::Player current_player = state->CurrentPlayer();
+    if (!quiet) std::cerr << "player turn: " << current_player << std::endl;
     open_spiel::Player opponent_player = 1 - current_player;
 
     // The state must be a decision node, ask the right bot to make its action.
-    open_spiel::Action action = bots[current_player]->Step(*state);
+    // - NOPE: not anymore; AZ also works with stochastic games now
+    open_spiel::Action action;
+    if (state->IsChanceNode()) {
+      // Chance node; sample one according to underlying distribution.
+      open_spiel::ActionsAndProbs outcomes = state->ChanceOutcomes();
+      action = open_spiel::SampleAction(outcomes, rng).first;
+      if (!quiet)
+        std::cerr << "Sampled action: "
+                  << state->ActionToString(current_player, action)
+                  << std::endl;
+    }
+    else {
+    action = bots[current_player]->Step(*state);
 
     if (!quiet)
-      std::cerr << "Player " << current_player << " chose action: "
-                << state->ActionToString(current_player, action) << std::endl;
+      if (!quiet)
+        std::cerr << "Chose action: "
+                  << state->ActionToString(current_player, action)
+                  << std::endl;
 
     // Inform the other bot of the action performed.
     bots[opponent_player]->InformAction(*state, current_player, action);
+    }
 
     // Update history and get the next state.
     history.push_back(state->ActionToString(current_player, action));
@@ -177,7 +193,8 @@ int main(int argc, char **argv) {
   if (game_type.dynamics != open_spiel::GameType::Dynamics::kSequential)
     open_spiel::SpielFatalError("Game must have sequential turns.");
   if (game_type.chance_mode != open_spiel::GameType::ChanceMode::kDeterministic)
-    open_spiel::SpielFatalError("Game must be deterministic.");
+    std::cerr << "The game is not deterministic!" << std::endl;
+    // open_spiel::SpielFatalError("Game must be deterministic.");
   if (absl::GetFlag(FLAGS_az_path).empty())
     open_spiel::SpielFatalError("AlphaZero path must be specified.");
   if (absl::GetFlag(FLAGS_player1) != "az" &&
