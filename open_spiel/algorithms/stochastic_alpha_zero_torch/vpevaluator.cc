@@ -82,15 +82,20 @@ std::vector<double> VPNetEvaluator::Evaluate(const State& state) {
     return {p0value, -p0value};
     */
     // TEST with random rollout at chance nodes
-    std::cout << "AlphaZero shouldn't need to evaluate Chance Nodes currently. (Probably error?)" << std::endl;
+    std::cerr << "AlphaZero shouldn't need to evaluate Chance Nodes currently. (Probably error?)" << std::endl;
     auto test_evaluator =
       std::make_shared<open_spiel::algorithms::RandomRolloutEvaluator>(
           /*rollout_count*/10, /*seed*/0);
     return test_evaluator->Evaluate(state);
   } else {
     // TODO(author5): currently assumes zero-sum.
-    double p0value = Inference(state).value;
-    return {p0value, -p0value};
+    // Make sure that the observationTensor is returned from the perspective
+    // of the current player in the implementation of each game!
+    double cur_player_value = Inference(state).value;
+    if (state.CurrentPlayer() == 1) {
+      return {-cur_player_value, cur_player_value};
+    }
+    return {cur_player_value, -cur_player_value};
   }
 }
 

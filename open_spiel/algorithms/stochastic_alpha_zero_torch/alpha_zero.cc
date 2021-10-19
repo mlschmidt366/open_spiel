@@ -136,6 +136,7 @@ Trajectory PlayGame(Logger* logger, int game_num, const open_spiel::Game& game,
         action = open_spiel::SampleAction(policy, *rng).first;
       }
 
+      // compute the root_value to be able to analyse the value predictions later
       root_value = root->total_reward / root->explore_count;
       trajectory.states.push_back(Trajectory::State{
           state->ObservationTensor(), player, state->LegalActions(), action,
@@ -359,17 +360,25 @@ void learner(const open_spiel::Game& game, const AlphaZeroConfig& config,
         outcomes.Add(p1_outcome > 0 ? 0 : (p1_outcome < 0 ? 1 : 2));
 
         for (const Trajectory::State& state : trajectory->states) {
-          replay_buffer.Add(VPNetModel::TrainInputs{state.legal_actions,
-                                                    state.observation,
-                                                    state.policy, p1_outcome});
+          // the trained value should be the return of the current player,
+          // as the value predictions should now always be from the perspective
+          // of the current player
+          replay_buffer.Add(
+            VPNetModel::TrainInputs{state.legal_actions,
+                                    state.observation,
+                                    state.policy,
+                                    trajectory->returns[state.current_player]});
           num_states += 1;
         }
 
+        // evaluate the value predictions at different stages of the game
         for (int stage = 0; stage < stage_count; ++stage) {
           // Scale for the length of the game
           int index = (trajectory->states.size() - 1) *
                       static_cast<double>(stage) / (stage_count - 1);
           const Trajectory::State& s = trajectory->states[index];
+          // the trajectory state value is returned by MCTS, therefore
+          // it's from the perspective of the current player
           value_accuracies[stage].Add(
               (s.value >= 0) == (trajectory->returns[s.current_player] >= 0));
           value_predictions[stage].Add(abs(s.value));
