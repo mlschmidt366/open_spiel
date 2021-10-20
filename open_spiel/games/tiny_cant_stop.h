@@ -39,12 +39,28 @@ enum class ObservationEncoding {
   kOneHot,   // "one_hot": one-hot encoding.
 };
 
+// helper function for serializing and deserializing chance outcomes
+int IntPower(int x, unsigned int p)
+{
+  if (p == 0) return 1;
+  if (p == 1) return x;
+  
+  int tmp = IntPower(x, p/2);
+  if (p%2 == 0) return tmp * tmp;
+  else return x * tmp * tmp;
+}
+
+struct ColumnProgress {
+  int column;
+  int progress;
+};
+
 class TinyCantStopGame;
 
 class TinyCantStopState : public State {
  public:
   TinyCantStopState(const TinyCantStopState&) = default;
-  TinyCantStopState(std::shared_ptr<const Game> game, int dice_outcomes, int horizon,
+  TinyCantStopState(std::shared_ptr<const Game> game, int col_len, int dice_outcomes, int n_dice, int n_select, int turn_cols, int horizon,
            int win_score, ObservationEncoding observation_encoding);
 
   Player CurrentPlayer() const override;
@@ -59,15 +75,39 @@ class TinyCantStopState : public State {
 
   std::unique_ptr<State> Clone() const override;
 
-  int dice_outcomes() const { return dice_outcomes_; }
   std::vector<Action> LegalActions() const override;
 
  protected:
   void DoApplyAction(Action move_id) override;
 
  private:
+  // Compute the dice values based on the chance outcome
+  void RollDice(std::vector<int> &dice_vec, Action outcome) const;
+
+  // Update the turn progress with the newly selected column.
+  void UpdateProgress(int column);
+
+  // Advance the current player according to his progress in this turn.
+  void LockProgress();
+
+  // Whether the current dice jeopardy the current player
+  bool IsJeopardy() const;
+
+  // Whether the column was scored by any player
+  bool IsScored(int column) const;
+
+  // Whether the current player can progress on a new column
+  bool CanOpenNewCol() const;
+
+  // Whether the current player can progress in the specified column
+  bool CanProgress(int column) const;
+
   // Initialize to bad/invalid values. Use open_spiel::NewInitialState()
+  int col_len_ = -1;
   int dice_outcomes_ = -1;  // Number of different dice outcomes (eg, 6).
+  int n_dice_ = -1;
+  int n_select_ = -1;
+  int turn_cols_ = -1;
   int horizon_ = -1;
   int nplayers_ = -1;
   int win_score_ = 0;
@@ -79,19 +119,21 @@ class TinyCantStopState : public State {
                             // to remember whose is playing for next turn.
                             // (cur_player will be the chance player's id.)
   std::vector<int> scores_;  // Score for each player.
-  int turn_total_ = -1;
+  std::vector<std::vector<int>> columns_;
+  std::vector<ColumnProgress> turn_progress_;
+  std::vector<int> dice_;
 };
 
 class TinyCantStopGame : public Game {
  public:
   explicit TinyCantStopGame(const GameParameters& params);
 
-  int NumDistinctActions() const override { return 2; }
+  int NumDistinctActions() const override { return 2 + (n_dice_ * (n_dice_+1) ) / 2; }
   std::unique_ptr<State> NewInitialState() const override {
     return std::unique_ptr<State>(
-        new TinyCantStopState(shared_from_this(), dice_outcomes_, horizon_, win_score_, observation_encoding_));
+        new TinyCantStopState(shared_from_this(), col_len_, dice_outcomes_, n_dice_, n_select_, turn_cols_, horizon_, win_score_, observation_encoding_));
   }
-  int MaxChanceOutcomes() const override { return 2; }
+  int MaxChanceOutcomes() const override { return IntPower(dice_outcomes_, n_dice_); }
 
   // There is arbitrarily chosen number to ensure the game is finite.
   int MaxGameLength() const override { return horizon_; }
@@ -105,8 +147,20 @@ class TinyCantStopGame : public Game {
   std::vector<int> ObservationTensorShape() const override;
 
  private:
+  // Length of each column.
+  int col_len_;
+
   // Number of different dice outcomes, i.e. 6.
   int dice_outcomes_;
+
+  // How many dice are rolled.
+  int n_dice_;
+
+  // How many dice to select each roll.
+  int n_select_;
+
+  // Maximum number of columns to progress in each turn.
+  int turn_cols_;
 
   // Maximum number of moves before draw.
   int horizon_;
