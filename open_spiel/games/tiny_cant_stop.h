@@ -102,6 +102,10 @@ class TinyCantStopState : public State {
   // Whether the current player can progress in the specified column
   bool CanProgress(int column) const;
 
+  // Get the current progress on the specified column
+  // Returns 0, if it was not (yet) selected for progress
+  int getProgress(int column) const;
+
   // Initialize to bad/invalid values. Use open_spiel::NewInitialState()
   int col_len_ = -1;
   int dice_outcomes_ = -1;  // Number of different dice outcomes (eg, 6).
@@ -115,7 +119,7 @@ class TinyCantStopState : public State {
 
   int total_moves_ = -1;    // Total num moves taken during the game.
   Player cur_player_ = -1;  // Player to play.
-  int turn_player_ = -1;    // Whose actual turn is it. At chance nodes, we need
+  Player turn_player_ = -1;    // Whose actual turn is it. At chance nodes, we need
                             // to remember whose is playing for next turn.
                             // (cur_player will be the chance player's id.)
   std::vector<int> scores_;  // Score for each player.

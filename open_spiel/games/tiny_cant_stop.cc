@@ -148,13 +148,12 @@ std::string TinyCantStopState::ObservationString(Player player) const {
 }
 
 std::vector<int> TinyCantStopGame::ObservationTensorShape() const {
-  //TODO
   switch (observation_encoding_) {
     case ObservationEncoding::kValue:
-      SpielFatalError("Not yet implemented");
+      return {1 + num_players_, dice_outcomes_};
 
     case ObservationEncoding::kOneHot:
-      SpielFatalError("Not yet implemented");
+      return {1 + num_players_, dice_outcomes_, col_len_ + 1};
 
     default:
       SpielFatalError("Unknown observation_encoding_");
@@ -275,9 +274,15 @@ void TinyCantStopState::DoApplyAction(Action move) {
 }
 
 void TinyCantStopState::UpdateProgress(int column) {
+  if (IsScored(column)) {
+    return;
+  }
+  // the column is not scored yet
   for (ColumnProgress& cp : turn_progress_) {
-    if (cp.column == column && (columns_[cp.column][turn_player_] + cp.progress) < col_len_) {
-      cp.progress += 1;
+    if (cp.column == column) {
+      if ((columns_[cp.column][turn_player_] + cp.progress) < col_len_) {
+        cp.progress += 1;
+      }
       return;
     }
   }
@@ -315,14 +320,18 @@ bool TinyCantStopState::CanProgress(int column) const {
   if (IsScored(column)) {
     return false;
   }
-  if (CanOpenNewCol()) {
-    return true;
-  }
   for (ColumnProgress cp : turn_progress_) {
     // one of the player's progress columns, where progress is still possible
-    if (column == cp.column && (columns_[cp.column][turn_player_] + cp.progress) < col_len_) {
-      return true;
+    if (column == cp.column) {
+      if ((columns_[cp.column][turn_player_] + cp.progress) < col_len_) {
+        return true;
+      }
+      // the player has already progressed to the end of the column
+      return false;
     }
+  }
+  if (CanOpenNewCol()) {
+    return true;
   }
   return false;
 }
@@ -402,15 +411,66 @@ void TinyCantStopState::RollDice(std::vector<int>& dice_vec, Action outcome) con
 }
 
 std::string TinyCantStopState::ToString() const {
-  // TODO: print columns
+  // TODO: print columns for more than 2 players
+  std::string col_str = "";
+  if (num_players_ == 2) {
+    // for 2 players, use 'o' and 'x' to mark players progress
+    // '*', if both players are on the same field
+    std::vector<std::string> col_array;
+    Player opp_player = 1 - turn_player_;
+    std::vector<std::string> player_symbols = {"o", "x"};
+
+    col_array.push_back(absl::StrCat("Player 0 = ", player_symbols[0],
+                                     ", Player 1 = ", player_symbols[1]));
+  
+    for (int i = 0; i < dice_outcomes_; i++) {
+      // print the columns as rows
+      std::string cur_col = absl::StrCat(i, ": ");
+      for (int j = 0; j <= col_len_; j++) {
+        if (columns_[i][turn_player_] <= j && columns_[i][turn_player_] + getProgress(i) >= j) {
+          if (columns_[i][opp_player] == j) {
+            absl::StrAppend(&cur_col, "*");
+          }
+          else {
+            absl::StrAppend(&cur_col, player_symbols[turn_player_]);
+          }
+        }
+        else if (columns_[i][opp_player] == j) {
+          absl::StrAppend(&cur_col, player_symbols[opp_player]);
+        }
+        else {
+          absl::StrAppend(&cur_col, "-");
+        }
+      }
+      if (IsScored(i)) {
+        absl::StrAppend(&cur_col, " (scored)");
+      }
+      col_array.push_back(cur_col);
+    }
+
+    col_str = absl::StrJoin(col_array, "\n") + "\n";
+  }
   std::string turn_total = "";
   for (ColumnProgress cp : turn_progress_) {
     turn_total = absl::StrCat(turn_total, " (", cp.column, ", ", cp.progress, ")");
   }
-  return absl::StrCat("Scores: ", absl::StrJoin(scores_, " "),
-                      ", Turn total:", turn_total,
-                      "\nCurrent player: ", turn_player_,
-                      (cur_player_ == kChancePlayerId ? " (rolling)\n" : "\n"));
+
+  std::string board_str = absl::StrCat(col_str, "Current player: ", turn_player_,
+                                       (cur_player_ == kChancePlayerId ? " (rolling)\n" : "\n"));
+  absl::StrAppend(&board_str, "Turn progress:", turn_total, "\n");
+  absl::StrAppend(&board_str, "Dice: ", absl::StrJoin(dice_, " "), "\n");
+  absl::StrAppend(&board_str, "Scores: ", absl::StrJoin(scores_, " "), "\n");
+
+  return board_str;
+}
+
+int TinyCantStopState::getProgress(int column) const {
+  for (ColumnProgress cp : turn_progress_) {
+    if (cp.column == column) {
+      return cp.progress;
+    }
+  }
+  return 0;
 }
 
 std::unique_ptr<State> TinyCantStopState::Clone() const {
