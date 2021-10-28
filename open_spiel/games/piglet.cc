@@ -29,10 +29,10 @@ namespace {
 enum ActionType { kRoll = 0, kStop = 1 };
 
 // Default parameters.
-constexpr double kDefaultJeopardyProb = 0.5; // corresponds to a fair coin being flipped
+constexpr double kDefaultJeopardyProb = 1.0 / 6;
 constexpr int kDefaultHorizon = 400;
 constexpr int kDefaultPlayers = 2;
-constexpr int kDefaultWinScore = 10;
+constexpr int kDefaultWinScore = 20;
 inline constexpr const char* kDefaultObservationEncoding = "one_hot";
 
 // Facts about the game
@@ -130,7 +130,8 @@ std::vector<int> PigletGame::ObservationTensorShape() const {
       return {1 + num_players_};
 
     case ObservationEncoding::kOneHot:
-      return {1 + num_players_, win_score_ + 1};
+      // TODO: 3-dimensional to please AlphaZero
+      return {1 + num_players_, win_score_ + 1, 1};
 
     default:
       SpielFatalError("Unknown observation_encoding_");
