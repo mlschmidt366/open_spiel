@@ -108,6 +108,8 @@ set(GAME_SOURCES
   phantom_ttt.h
   pig.cc
   pig.h
+  piglet.cc
+  piglet.h
   quoridor.cc
   quoridor.h
   rbc.cc
@@ -420,6 +422,10 @@ add_test(phantom_ttt_test phantom_ttt_test)
 add_executable(pig_test pig_test.cc ${OPEN_SPIEL_OBJECTS}
                $<TARGET_OBJECTS:tests>)
 add_test(pig_test pig_test)
+
+add_executable(piglet_test piglet_test.cc ${OPEN_SPIEL_OBJECTS}
+               $<TARGET_OBJECTS:tests>)
+add_test(piglet_test piglet_test)
 
 add_executable(quoridor_test quoridor_test.cc ${OPEN_SPIEL_OBJECTS}
                $<TARGET_OBJECTS:tests>)
