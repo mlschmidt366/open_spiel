@@ -111,28 +111,41 @@ Trajectory PlayGame(Logger* logger, int game_num, const open_spiel::Game& game,
 
   while (true) {
     open_spiel::Player player = state->CurrentPlayer();
-    std::unique_ptr<SearchNode> root = (*bots)[player]->MCTSearch(*state);
-    open_spiel::ActionsAndProbs policy;
-    policy.reserve(root->children.size());
-    for (const SearchNode& c : root->children) {
-      policy.emplace_back(c.action,
-                          std::pow(c.explore_count, 1.0 / temperature));
-    }
-    NormalizePolicy(&policy);
     open_spiel::Action action;
-    if (history.size() >= temperature_drop) {
-      action = root->BestChild().action;
-    } else {
-      action = open_spiel::SampleAction(policy, *rng).first;
+    // TODO: can be left like this? root_value is only used in the cutoff_value
+    // so for now it needs to be make sure that initialized value < cutoff_value
+    double root_value = 0;
+    if (state->IsChanceNode()) {
+      // Chance node; sample one according to underlying distribution.
+      std::vector<std::pair<open_spiel::Action, double>> outcomes =
+          state->ChanceOutcomes();
+      action = open_spiel::SampleAction(outcomes, *rng).first;
     }
+    else {
+      std::unique_ptr<SearchNode> root = (*bots)[player]->MCTSearch(*state);
+      open_spiel::ActionsAndProbs policy;
+      policy.reserve(root->children.size());
+      for (const SearchNode& c : root->children) {
+        policy.emplace_back(c.action,
+                            std::pow(c.explore_count, 1.0 / temperature));
+      }
+      NormalizePolicy(&policy);
+      if (history.size() >= temperature_drop) {
+        action = root->BestChild().action;
+      } else {
+        action = open_spiel::SampleAction(policy, *rng).first;
+      }
 
-    double root_value = root->total_reward / root->explore_count;
-    trajectory.states.push_back(Trajectory::State{
-        state->ObservationTensor(), player, state->LegalActions(), action,
-        std::move(policy), root_value});
+      // compute the root_value to be able to analyse the value predictions later
+      root_value = root->total_reward / root->explore_count;
+      trajectory.states.push_back(Trajectory::State{
+          state->ObservationTensor(), player, state->LegalActions(), action,
+          std::move(policy), root_value});
+    }
     std::string action_str = state->ActionToString(player, action);
     history.push_back(action_str);
     state->ApplyAction(action);
+
     if (verbose) {
       logger->Print("Player: %d, action: %s", player, action_str);
     }
@@ -358,11 +371,14 @@ void learner(const open_spiel::Game& game, const AlphaZeroConfig& config,
           num_states += 1;
         }
 
+        // evaluate the value predictions at different stages of the game
         for (int stage = 0; stage < stage_count; ++stage) {
           // Scale for the length of the game
           int index = (trajectory->states.size() - 1) *
                       static_cast<double>(stage) / (stage_count - 1);
           const Trajectory::State& s = trajectory->states[index];
+          // the trajectory state value is returned by MCTS, therefore
+          // it's from the perspective of the current player
           value_accuracies[stage].Add(
               (s.value >= 0) == (trajectory->returns[s.current_player] >= 0));
           value_predictions[stage].Add(abs(s.value));
@@ -499,7 +515,8 @@ bool AlphaZero(AlphaZeroConfig config, StopToken* stop, bool resuming) {
   if (game_type.dynamics != open_spiel::GameType::Dynamics::kSequential)
     open_spiel::SpielFatalError("Game must have sequential turns.");
   if (game_type.chance_mode != open_spiel::GameType::ChanceMode::kDeterministic)
-    open_spiel::SpielFatalError("Game must be deterministic.");
+    std::cout << "Note: The game is not deterministic!" << std::endl;
+  //  open_spiel::SpielFatalError("Game must be deterministic.");
 
   file::Mkdirs(config.path);
   if (!file::IsDirectory(config.path)) {
