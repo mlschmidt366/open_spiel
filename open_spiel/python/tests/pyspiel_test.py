@@ -89,6 +89,7 @@ EXPECTED_GAMES = set([
     "phantom_ttt",
     "phantom_ttt_ir",
     "pig",
+    "piglet",
     "python_dynamic_routing",
     "python_iterated_prisoners_dilemma",
     "python_mfg_crowd_modelling",
