@@ -258,10 +258,16 @@ std::unique_ptr<State> MCTSBot::ApplyTreePolicy(
   visit_path->push_back(root);
   std::unique_ptr<State> working_state = state.Clone();
   SearchNode* current_node = root;
-  while (!working_state->IsTerminal() && current_node->explore_count > 0) {
+  while (!working_state->IsTerminal()
+      && (current_node->explore_count > 0 || working_state->IsChanceNode())) {
     if (current_node->children.empty()) {
       // For a new node, initialize its state, then choose a child as normal.
-      ActionsAndProbs legal_actions = evaluator_->Prior(*working_state);
+      ActionsAndProbs legal_actions;
+      if (working_state->IsChanceNode()) {
+        legal_actions = working_state->ChanceOutcomes();
+      } else {
+        legal_actions = evaluator_->Prior(*working_state);
+      }
       if (current_node == root && dirichlet_alpha_ > 0) {
         std::vector<double> noise =
             dirichlet_noise(legal_actions.size(), dirichlet_alpha_, &rng_);
@@ -343,6 +349,9 @@ std::unique_ptr<SearchNode> MCTSBot::MCTSearch(const State& state) {
       visit_path[visit_path.size() - 1]->outcome = returns;
       solved = solve_;
     } else {
+      if (working_state->IsChanceNode()) {
+        SpielFatalError("The Tree policy should sample chance nodes immediately.");
+      }
       returns = evaluator_->Evaluate(*working_state);
       solved = false;
     }
@@ -351,6 +360,7 @@ std::unique_ptr<SearchNode> MCTSBot::MCTSearch(const State& state) {
     for (auto it = visit_path.rbegin(); it != visit_path.rend(); ++it) {
       SearchNode* node = *it;
 
+      // at chance nodes, the reward is from the perspective of the root player
       node->total_reward +=
           returns[node->player == kChancePlayerId ? player_id : node->player];
       node->explore_count += 1;
