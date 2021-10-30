@@ -143,8 +143,7 @@ void PigletState::ObservationTensor(Player player,
   SPIEL_CHECK_GE(player, 0);
   SPIEL_CHECK_LT(player, num_players_);
 
-  // NOTE: The observation tensor is always returned from the perspective of the
-  // current player. It does NOT depend on the argument 'player' of this function.
+  // NOTE: The observation tensor is always returned from the same perspective
   switch (observation_encoding_) {
     case ObservationEncoding::kValue:
     {
@@ -152,7 +151,7 @@ void PigletState::ObservationTensor(Player player,
       SPIEL_CHECK_EQ(values.size(), 1 + num_players_);
       values[0] = turn_total_;
       for (auto p = Player{0}; p < num_players_; p++) {
-        values[1 + p] = scores_[(p+turn_player_) % num_players_];
+        values[1 + p] = scores_[p];
       }
       break;
     }
@@ -188,7 +187,7 @@ void PigletState::ObservationTensor(Player player,
 
       // Find the right bin for each player.
       for (auto p = Player{0}; p < num_players_; p++) {
-        bin = scores_[(p+turn_player_) % num_players_];
+        bin = scores_[p];
         if (bin >= num_bins) {
           // When the value is too large, use last bin.
           values[pos + (num_bins - 1)] = 1;
