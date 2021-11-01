@@ -39,17 +39,6 @@ enum class ObservationEncoding {
   kOneHot,   // "one_hot": one-hot encoding.
 };
 
-// helper function for serializing and deserializing chance outcomes
-int IntPower(int x, unsigned int p)
-{
-  if (p == 0) return 1;
-  if (p == 1) return x;
-  
-  int tmp = IntPower(x, p/2);
-  if (p%2 == 0) return tmp * tmp;
-  else return x * tmp * tmp;
-}
-
 struct ColumnProgress {
   int column;
   int progress;

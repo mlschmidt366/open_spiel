@@ -389,7 +389,10 @@ std::vector<std::pair<Action, double>> TinyCantStopState::ChanceOutcomes() const
   SPIEL_CHECK_TRUE(IsChanceNode());
   std::vector<std::pair<Action, double>> outcomes;
 
-  int num_outcomes = IntPower(dice_outcomes_, n_dice_);
+  int num_outcomes = 1;
+  for (int i = 0; i < n_dice_; i++) {
+    num_outcomes *= dice_outcomes_;
+  }
   outcomes.reserve(num_outcomes);
   for (int i = 0; i < num_outcomes; i++) {
     outcomes.push_back(std::make_pair(i, 1.0 / num_outcomes));
@@ -399,15 +402,13 @@ std::vector<std::pair<Action, double>> TinyCantStopState::ChanceOutcomes() const
 }
 
 void TinyCantStopState::RollDice(std::vector<int>& dice_vec, Action outcome) const {
-  SPIEL_CHECK_GE(outcome, 0);
-  SPIEL_CHECK_LT(outcome, IntPower(dice_outcomes_, n_dice_));
-
-  // TODO: probably there is a more efficient implementation
+  SPIEL_CHECK_EQ(dice_vec.size(), 0);
+  // Unrank action
   for (int d = n_dice_ - 1; d >= 0; d--) {
-    int cur_pow = IntPower(dice_outcomes_, d);
-    dice_vec.push_back(outcome / cur_pow);
-    outcome %= cur_pow;
+    dice_vec.push_back(outcome % dice_outcomes_);
+    outcome /= dice_outcomes_;
   }
+  SPIEL_CHECK_EQ(outcome, 0);
 }
 
 std::string TinyCantStopState::ToString() const {
