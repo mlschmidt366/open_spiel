@@ -19,7 +19,7 @@
 #include <utility>
 
 #include "open_spiel/game_parameters.h"
-#include "open_spiel/spiel.h"
+#include "open_spiel/utils/tensor_view.h"
 
 namespace open_spiel {
 namespace piglet {
@@ -158,14 +158,11 @@ void PigletState::ObservationTensor(Player player,
 
     case ObservationEncoding::kOneHot:
     {
-      // One extra bin for when value is >= max.
-      // So for win_score_ 15 -> 0, 1, ..., 99, >= 100.
-      int num_bins = win_score_ + 1;
-
       // One-hot encoding: turn total (#bin) followed by p1, p2, ...
-      SPIEL_CHECK_EQ(values.size(), num_bins + num_players_ * num_bins);
-      std::fill(values.begin(), values.end(), 0.);
-      int pos = 0;
+      // One extra bin for when value is >= max.
+      // So for win_score_ 15 -> 0, 1, ..., 14, >= 15.
+      // Treat `values` as a 2-d tensor.
+      TensorView<2> view(values, {1 + num_players_, win_score_ + 1}, true);
 
       // One-hot encoding:
       //  - turn total (#bins)
@@ -175,27 +172,12 @@ void PigletState::ObservationTensor(Player player,
       //      .
       //      .
 
-      int bin = turn_total_;
-      if (bin >= num_bins) {
-        // When the value is too large, use last bin.
-        values[pos + (num_bins - 1)] = 1;
-      } else {
-        values[pos + bin] = 1;
-      }
+      // turn total
+      view[{0, std::min(turn_total_, win_score_)}] = 1;
 
-      pos += num_bins;
-
-      // Find the right bin for each player.
       for (auto p = Player{0}; p < num_players_; p++) {
-        bin = scores_[(p+turn_player_) % num_players_];
-        if (bin >= num_bins) {
-          // When the value is too large, use last bin.
-          values[pos + (num_bins - 1)] = 1;
-        } else {
-          values[pos + bin] = 1;
-        }
-
-        pos += num_bins;
+        // score of each player
+        view[{1 + p, std::min(scores_[(p+turn_player_) % num_players_], win_score_)}] = 1;
       }
       break;
     }
