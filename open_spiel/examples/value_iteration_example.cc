@@ -31,9 +31,10 @@ int main(int argc, char** argv) {
   absl::ParseCommandLine(argc, argv);
 
   std::shared_ptr<const open_spiel::Game> game =
-      open_spiel::LoadGame(absl::GetFlag(FLAGS_game));
+      open_spiel::LoadGame("pig", {{"winscore", open_spiel::GameParameter(20)}});
+      //open_spiel::LoadGame(absl::GetFlag(FLAGS_game));
 
-  auto solution = open_spiel::algorithms::ValueIteration(*game, absl::GetFlag(FLAGS_depth_limit), absl::GetFlag(FLAGS_threshold));
+  auto solution = open_spiel::algorithms::ValueIteration(*game, absl::GetFlag(FLAGS_depth_limit), absl::GetFlag(FLAGS_threshold), true);
   for (const auto& kv : solution) {
     std::cerr << "State: " << std::endl
               << kv.first << std::endl

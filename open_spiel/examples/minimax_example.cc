@@ -13,6 +13,7 @@
 // limitations under the License.
 
 #include "open_spiel/algorithms/minimax.h"
+#include "open_spiel/algorithms/value_iteration.h"
 
 #include <memory>
 
@@ -33,6 +34,70 @@ uint_fast32_t Seed() {
 
 namespace open_spiel {
 namespace {
+
+// expands a value solution over deterministic nodes to chance nodes
+// can also be used to simply wrap a 'solution' in a function
+std::function<double(const State&)> _chance_value_function(const std::map<std::string, double>& solution) {
+  return [&solution](const State& state)->double {
+    auto chance_evaluator = [&solution](const State& state, auto& evaluator_ref)->double {
+      if (state.IsChanceNode() && solution.find(state.ToString()) == solution.end()) {
+        double value = 0;
+        for (const auto& actionprob : state.ChanceOutcomes()) {
+          auto child_state = state.Clone();
+          child_state->ApplyAction(actionprob.first);
+          double child_value = evaluator_ref(*child_state, evaluator_ref);
+          value += actionprob.second * child_value;
+        }
+        return value;
+      }
+      return solution.at(state.ToString());
+    };
+    return chance_evaluator(state, chance_evaluator);
+  };
+}
+
+void PlayGame(std::mt19937& rng) {
+  std::shared_ptr<const Game> game =
+      LoadGame("pig", {{"winscore", GameParameter(kWinscorePig)},
+                      {"diceoutcomes", GameParameter(3)}});
+  std::unique_ptr<State> state = game->NewInitialState();
+
+  auto solution = algorithms::ValueIteration(*game, -1, 0.01);
+  auto chance_solution = _chance_value_function(solution);
+
+  while (!state->IsTerminal()) {
+    std::cout << std::endl << state->ToString() << std::endl;
+    Player player = state->CurrentPlayer();
+
+    if (state->IsChanceNode()) {
+      // Chance node; sample one according to underlying distribution.
+      ActionsAndProbs outcomes = state->ChanceOutcomes();
+      Action action = open_spiel::SampleAction(outcomes, rng).first;
+      std::cerr << "Sampled action: " << state->ActionToString(player, action)
+                << std::endl;
+      state->ApplyAction(action);
+    } else {
+      auto value_function = [player, &chance_solution](const State& state)->double {
+          return (player == Player{0} ? chance_solution(state) :
+                                        -chance_solution(state));
+          };
+      std::pair<double, Action> value_action = algorithms::ExpectiminimaxSearch(
+          *game, state.get(), value_function,
+          /*depth_limit=*/1, player);
+
+      std::cout << std::endl << "Player " << player << " choosing action "
+                << state->ActionToString(player, value_action.second)
+                << " with value " << value_action.first
+                << std::endl;
+
+      state->ApplyAction(value_action.second);
+    }
+  }
+
+  std::cout << "Terminal state: " << std::endl;
+  std::cout << state->ToString() << std::endl;
+}
+
 
 int BlackPieceAdvantage(const State& state) {
   const auto& bstate = down_cast<const breakthrough::BreakthroughState&>(state);
