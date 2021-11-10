@@ -31,7 +31,8 @@ namespace algorithms {
 // with or without chance nodes.
 
 std::map<std::string, double> ValueIteration(const Game& game, int depth_limit,
-                                             double threshold);
+                                             double threshold,
+                                             bool include_chance_states = false);
 
 }  // namespace algorithms
 }  // namespace open_spiel

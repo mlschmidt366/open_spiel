@@ -30,31 +30,46 @@ using state_prob = std::pair<std::string, double>;
 
 // Adds transitions and transition probability from a given state
 void AddTransition(map<state_action, vector<state_prob>>* transitions,
-                   std::string key, const state_pointer& state) {
-  for (auto action : state->LegalActions()) {
-    auto next_state = state->Clone();
-    next_state->ApplyAction(action);
-    vector<state_prob> possibilities;
-    if (next_state->IsChanceNode()) {
+                   std::string key, const state_pointer& state,
+                   bool include_chance_states) {
+  if (state->IsChanceNode()) {
+    SPIEL_CHECK_EQ(include_chance_states, true);
+    for (const auto& actionprob : state->ChanceOutcomes()) {
+      vector<state_prob> possibilities;
       // For a chance node, record the transition probabilities
-      for (const auto& actionprob : next_state->ChanceOutcomes()) {
-        auto realized_next_state = next_state->Clone();
-        realized_next_state->ApplyAction(actionprob.first);
-        possibilities.emplace_back(realized_next_state->ToString(),
-                                   actionprob.second);
-      }
-    } else {
-      // A non-chance node is equivalent to transition with probability 1
-      possibilities.emplace_back(next_state->ToString(), 1.0);
+      auto next_state = state->Clone();
+      next_state->ApplyAction(actionprob.first);
+      possibilities.emplace_back(next_state->ToString(),
+                                  actionprob.second);
+      (*transitions)[std::make_pair(key, actionprob.first)] = possibilities;
     }
-    (*transitions)[std::make_pair(key, action)] = possibilities;
+  } else {
+    for (auto action : state->LegalActions()) {
+      auto next_state = state->Clone();
+      next_state->ApplyAction(action);
+      vector<state_prob> possibilities;
+      if (next_state->IsChanceNode() && !include_chance_states) {
+        // For a chance node, record the transition probabilities
+        for (const auto& actionprob : next_state->ChanceOutcomes()) {
+          auto realized_next_state = next_state->Clone();
+          realized_next_state->ApplyAction(actionprob.first);
+          possibilities.emplace_back(realized_next_state->ToString(),
+                                    actionprob.second);
+        }
+      } else {
+        // A non-chance node is equivalent to transition with probability 1
+        possibilities.emplace_back(next_state->ToString(), 1.0);
+      }
+      (*transitions)[std::make_pair(key, action)] = possibilities;
+    }
   }
 }
 
 // Initialize transition map and value map
 void InitializeMaps(const map<std::string, state_pointer>& states,
                     map<std::string, double>* values,
-                    map<state_action, vector<state_prob>>* transitions) {
+                    map<state_action, vector<state_prob>>* transitions,
+                    bool include_chance_states) {
   for (const auto& kv : states) {
     auto key = kv.first;
     if (kv.second->IsTerminal()) {
@@ -63,7 +78,7 @@ void InitializeMaps(const map<std::string, state_pointer>& states,
       (*values)[key] = kv.second->PlayerReturn(Player{0});
     } else {
       (*values)[key] = 0;
-      AddTransition(transitions, key, kv.second);
+      AddTransition(transitions, key, kv.second, include_chance_states);
     }
   }
 }
@@ -71,7 +86,7 @@ void InitializeMaps(const map<std::string, state_pointer>& states,
 }  // namespace
 
 std::map<std::string, double> ValueIteration(const Game& game, int depth_limit,
-                                             double threshold) {
+                                             double threshold, bool include_chance_states) {
   using state_action = std::pair<std::string, Action>;
   using state_prob = std::pair<std::string, double>;
 
@@ -88,11 +103,11 @@ std::map<std::string, double> ValueIteration(const Game& game, int depth_limit,
                  GameType::Information::kPerfectInformation);
 
   auto states = GetAllStates(game, depth_limit, /*include_terminals=*/true,
-                             /*include_chance_states=*/false);
+                             include_chance_states);
   std::map<std::string, double> values;
   std::map<state_action, std::vector<state_prob>> transitions;
 
-  InitializeMaps(states, &values, &transitions);
+  InitializeMaps(states, &values, &transitions, include_chance_states);
 
   double error;
   double min_utility = game.MinUtility();
@@ -106,19 +121,25 @@ std::map<std::string, double> ValueIteration(const Game& game, int depth_limit,
 
       auto player = kv.second->CurrentPlayer();
 
-      // Initialize value to be the minimum utility if current player
+      // Initialize value to be 0 if chance node, or else
+      // to be the minimum utility if current player
       // is the maximizing player (i.e. player 0), and to maximum utility
       // if current player is the minimizing player (i.e. player 1).
-      double value = (player == Player{0}) ? min_utility : max_utility;
+      double value = (player == kChancePlayerId) ? 0 :
+                     (player == Player{0})       ? min_utility :
+                                                   max_utility;
       for (auto action : kv.second->LegalActions()) {
         auto possibilities = transitions[std::make_pair(key, action)];
         double q_value = 0;
         for (const auto& outcome : possibilities) {
           q_value += outcome.second * values[outcome.first];
         }
+        // Chance Player is averaging the value
         // Player 0 is maximizing the value (which is w.r.t. player 0)
         // Player 1 is minimizing the value
-        if (player == Player{0})
+        if (player == kChancePlayerId)
+          value += q_value;
+        else if (player == Player{0})
           value = std::max(value, q_value);
         else
           value = std::min(value, q_value);
