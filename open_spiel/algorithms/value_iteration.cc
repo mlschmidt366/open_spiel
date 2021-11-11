@@ -155,7 +155,7 @@ std::map<std::string, double> ValueIteration(const Game& game, int depth_limit,
 }
 
 std::function<double(const State&)> MakeChanceValueFunction(const std::map<std::string, double>& solution) {
-  return [&solution](const State& state)->double {
+  return [solution](const State& state)->double {
     auto chance_evaluator = [&solution](const State& state, auto& evaluator_ref)->double {
       if (state.IsChanceNode() && solution.find(state.ToString()) == solution.end()) {
         double value = 0;

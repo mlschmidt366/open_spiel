@@ -91,7 +91,7 @@ InitBot(std::string type, const open_spiel::Game &game,
   if (type == "minimax") {
     auto solution = open_spiel::algorithms::ValueIteration(game, -1, 0.01);
     auto chance_solution = open_spiel::algorithms::MakeChanceValueFunction(solution);
-    auto value_function = [player, &chance_solution](const open_spiel::State& state)->double {
+    auto value_function = [player, chance_solution](const open_spiel::State& state)->double {
             return (player == open_spiel::Player{0} ? chance_solution(state) :
                                           -chance_solution(state));
             };
@@ -192,6 +192,8 @@ int main(int argc, char **argv) {
   std::cerr << "Game: " << game_name << std::endl;
   std::shared_ptr<const open_spiel::Game> game =
       open_spiel::LoadGame(game_name);
+  
+  bool alphazero_plays = false;
 
   // Ensure the game is AlphaZero-compatible and arguments are compatible.
   open_spiel::GameType game_type = game->GetType();
@@ -208,20 +210,24 @@ int main(int argc, char **argv) {
     if (absl::GetFlag(FLAGS_az_path).empty())
       open_spiel::SpielFatalError("AlphaZero path must be specified.");
     std::cerr << "AlphaZero is playing." << std::endl;
+    alphazero_plays = true;
   }
 
-  open_spiel::algorithms::torch_az::DeviceManager device_manager;
-  device_manager.AddDevice(open_spiel::algorithms::torch_az::VPNetModel(
-      *game, absl::GetFlag(FLAGS_az_path), absl::GetFlag(FLAGS_az_graph_def),
-      "/cpu:0"));
-  device_manager.Get(0, 0)->LoadCheckpoint(absl::GetFlag(FLAGS_az_checkpoint));
-  auto az_evaluator =
-      std::make_shared<open_spiel::algorithms::torch_az::VPNetEvaluator>(
-          /*device_manager=*/&device_manager,
-          /*batch_size=*/absl::GetFlag(FLAGS_az_batch_size),
-          /*threads=*/absl::GetFlag(FLAGS_az_threads),
-          /*cache_size=*/absl::GetFlag(FLAGS_az_cache_size),
-          /*cache_shards=*/absl::GetFlag(FLAGS_az_cache_shards));
+  std::shared_ptr<open_spiel::algorithms::torch_az::VPNetEvaluator> az_evaluator = nullptr;
+  if (alphazero_plays) {
+    open_spiel::algorithms::torch_az::DeviceManager device_manager;
+    device_manager.AddDevice(open_spiel::algorithms::torch_az::VPNetModel(
+        *game, absl::GetFlag(FLAGS_az_path), absl::GetFlag(FLAGS_az_graph_def),
+        "/cpu:0"));
+    device_manager.Get(0, 0)->LoadCheckpoint(absl::GetFlag(FLAGS_az_checkpoint));
+    az_evaluator =
+        std::make_shared<open_spiel::algorithms::torch_az::VPNetEvaluator>(
+            /*device_manager=*/&device_manager,
+            /*batch_size=*/absl::GetFlag(FLAGS_az_batch_size),
+            /*threads=*/absl::GetFlag(FLAGS_az_threads),
+            /*cache_size=*/absl::GetFlag(FLAGS_az_cache_size),
+            /*cache_shards=*/absl::GetFlag(FLAGS_az_cache_shards));
+  }
   auto evaluator =
       std::make_shared<open_spiel::algorithms::RandomRolloutEvaluator>(
           absl::GetFlag(FLAGS_rollout_count), Seed());
