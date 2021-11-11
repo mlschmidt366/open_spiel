@@ -19,6 +19,7 @@
 #include <utility>
 
 #include "open_spiel/spiel.h"
+#include "open_spiel/spiel_bots.h"
 
 namespace open_spiel {
 namespace algorithms {
@@ -75,6 +76,39 @@ std::pair<double, Action> ExpectiminimaxSearch(
     const Game& game, const State* state,
     std::function<double(const State&)> value_function, int depth_limit,
     Player maximizing_player);
+
+
+// A SpielBot that uses one of the Minimax algorithms as its policy.
+// AlphaBetaSearch for deterministic games and ExpectiminimaxSearch for
+// explicit stochastic games.
+class MinimaxBot : public Bot {
+ public:
+  MinimaxBot(
+      const Game& game, std::function<double(const State&)> value_function,
+      int depth_limit, Player maximizing_player, bool verbose);
+  ~MinimaxBot() = default;
+
+  void Restart() override {}
+  void RestartAt(const State& state) override {}
+  // Run Minimax for one step, choosing the action, and printing some information.
+  Action Step(const State& state) override;
+
+  // Implements StepWithPolicy. This is equivalent to calling Step, but wraps
+  // the action as an ActionsAndProbs with 100% probability assigned to the
+  // lone action.
+  std::pair<ActionsAndProbs, Action> StepWithPolicy(
+      const State& state) override;
+
+  // Run Minimax on a given state, and return the value and best action.
+  std::pair<double, Action> MinimaxSearch(const State& state);
+
+ private:
+  int depth_limit_;
+  bool verbose_;
+  Player maximizing_player_;
+  std::function<double(const State&)> value_function_;
+  bool deterministic_game_;
+};
 
 }  // namespace algorithms
 }  // namespace open_spiel
