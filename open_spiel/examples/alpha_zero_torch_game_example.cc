@@ -203,11 +203,12 @@ int main(int argc, char **argv) {
     open_spiel::SpielFatalError("Game must have sequential turns.");
   if (game_type.chance_mode != open_spiel::GameType::ChanceMode::kDeterministic)
     std::cerr << "The game is not deterministic!" << std::endl;
-  if (absl::GetFlag(FLAGS_az_path).empty())
-    open_spiel::SpielFatalError("AlphaZero path must be specified.");
-  if (absl::GetFlag(FLAGS_player1) != "az" &&
-      absl::GetFlag(FLAGS_player2) != "az")
-    open_spiel::SpielFatalError("One of the players must be AlphaZero.");
+  if (absl::GetFlag(FLAGS_player1) == "az" ||
+      absl::GetFlag(FLAGS_player2) == "az") {
+    if (absl::GetFlag(FLAGS_az_path).empty())
+      open_spiel::SpielFatalError("AlphaZero path must be specified.");
+    std::cerr << "AlphaZero is playing." << std::endl;
+  }
 
   open_spiel::algorithms::torch_az::DeviceManager device_manager;
   device_manager.AddDevice(open_spiel::algorithms::torch_az::VPNetModel(
