@@ -35,27 +35,6 @@ uint_fast32_t Seed() {
 namespace open_spiel {
 namespace {
 
-// expands a value solution over deterministic nodes to chance nodes
-// can also be used to simply wrap a 'solution' in a function
-std::function<double(const State&)> _chance_value_function(const std::map<std::string, double>& solution) {
-  return [&solution](const State& state)->double {
-    auto chance_evaluator = [&solution](const State& state, auto& evaluator_ref)->double {
-      if (state.IsChanceNode() && solution.find(state.ToString()) == solution.end()) {
-        double value = 0;
-        for (const auto& actionprob : state.ChanceOutcomes()) {
-          auto child_state = state.Clone();
-          child_state->ApplyAction(actionprob.first);
-          double child_value = evaluator_ref(*child_state, evaluator_ref);
-          value += actionprob.second * child_value;
-        }
-        return value;
-      }
-      return solution.at(state.ToString());
-    };
-    return chance_evaluator(state, chance_evaluator);
-  };
-}
-
 void PlayGame(std::mt19937& rng) {
   std::shared_ptr<const Game> game =
       LoadGame("pig", {{"winscore", GameParameter(kWinscorePig)},
@@ -63,7 +42,7 @@ void PlayGame(std::mt19937& rng) {
   std::unique_ptr<State> state = game->NewInitialState();
 
   auto solution = algorithms::ValueIteration(*game, -1, 0.01);
-  auto chance_solution = _chance_value_function(solution);
+  auto chance_solution = algorithms::MakeChanceValueFunction(solution);
 
   while (!state->IsTerminal()) {
     std::cout << std::endl << state->ToString() << std::endl;
