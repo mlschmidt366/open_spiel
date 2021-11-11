@@ -293,5 +293,72 @@ std::pair<double, Action> ExpectiminimaxSearch(
   return std::pair<double, Action>(value, best_action);
 }
 
+
+MinimaxBot::MinimaxBot(const Game& game, std::function<double(const State&)> value_function,
+      int depth_limit, Player maximizing_player, bool verbose)
+    : depth_limit_(depth_limit),
+      verbose_(verbose),
+      maximizing_player_(maximizing_player),
+      value_function_(value_function) {
+  if (game.NumPlayers() != 2) {
+    SpielFatalError("Game must be a 2-player game");
+  }
+  GameType game_info = game.GetType();
+  if (game_info.chance_mode == GameType::ChanceMode::kDeterministic) {
+    deterministic_game_ = true;
+  } else if (game_info.chance_mode == GameType::ChanceMode::kExplicitStochastic) {
+    deterministic_game_ = false;
+  } else {
+    SpielFatalError(absl::StrCat("The game should be either Deterministic or Explicit Stochastic, not ",
+                                 game_info.chance_mode));
+  }
+  if (game_info.information != GameType::Information::kPerfectInformation) {
+    SpielFatalError(
+        absl::StrCat("The game must be a perfect information one, not ",
+                     game_info.information));
+  }
+  if (game_info.dynamics != GameType::Dynamics::kSequential) {
+    SpielFatalError(
+        absl::StrCat("The game must be turn-based, not ", game_info.dynamics));
+  }
+  if (game_info.utility != GameType::Utility::kZeroSum) {
+    SpielFatalError(
+        absl::StrCat("The game must be 0-sum, not  ", game_info.utility));
+  }
+}
+
+Action MinimaxBot::Step(const State& state) {
+  std::pair<double, Action> value_action = MinimaxSearch(state);
+  SPIEL_CHECK_OP(value_action.second, !=, kInvalidAction);
+
+  if (verbose_) {
+    std::cerr << "Choosing action " << state.ActionToString(maximizing_player_, value_action.second)
+                << " with value " << value_action.first << std::endl;
+  }
+
+  return value_action.second;
+}
+
+std::pair<ActionsAndProbs, Action> MinimaxBot::StepWithPolicy(const State& state) {
+  Action action = Step(state);
+  return {{{action, 1.}}, action};
+}
+
+std::pair<double, Action> MinimaxBot::MinimaxSearch(const State& state) {
+  double infinity = std::numeric_limits<double>::infinity();
+  Action best_action = kInvalidAction;
+  double value;
+  if (deterministic_game_) {
+    value = _alpha_beta(
+        state.Clone().get(), /*depth=*/depth_limit_, /*alpha=*/-infinity,
+        /*beta=*/infinity, value_function_, maximizing_player_, &best_action);
+  } else {
+    value = _expectiminimax(
+        state.Clone().get(), /*depth=*/depth_limit_, value_function_, maximizing_player_, &best_action);
+  }
+
+  return std::pair<double, Action>(value, best_action);
+}
+
 }  // namespace algorithms
 }  // namespace open_spiel
