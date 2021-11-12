@@ -19,6 +19,7 @@
 #include <utility>
 
 #include "open_spiel/spiel.h"
+#include "open_spiel/spiel_bots.h"
 
 namespace open_spiel {
 namespace algorithms {
@@ -32,9 +33,9 @@ namespace algorithms {
 //   state: The state to start from. If nullptr, starts from initial state.
 //   value_function: An optional function mapping a Spiel `State` to a
 //     numerical value to the maximizing player, to be used as the value for a
-//     node when we reach `maximum_depth` and the node is not terminal. Use
+//     node when we reach `depth_limit` and the node is not terminal. Use
 //     `nullptr` for no value function.
-//   maximum_depth: The maximum depth to search over. When this depth is
+//   depth_limit: The maximum depth to search over. When this depth is
 //     reached, an exception will be raised.
 //   maximizing_player_id: The id of the MAX player. The other player is assumed
 //     to be MIN. Passing in kInvalidPlayer will set this to the search root's
@@ -48,6 +49,66 @@ std::pair<double, Action> AlphaBetaSearch(
     const Game& game, const State* state,
     std::function<double(const State&)> value_function, int depth_limit,
     Player maximizing_player);
+
+
+// Solves stochastic, 2-players, perfect-information 0-sum game.
+//
+// For small games only! Please use keyword arguments for optional arguments.
+//
+// Arguments:
+//   game: The game to analyze, as returned by `LoadGame`.
+//   state: The state to start from. If nullptr, starts from initial state.
+//   value_function: An optional function mapping a Spiel `State` to a
+//     numerical value to the maximizing player, to be used as the value for a
+//     node when we reach `depth_limit` and the node is not terminal. Use
+//     `nullptr` for no value function.
+//   depth_limit: The maximum depth to search over (not counting chance nodes).
+//     When this depth is reached, an exception will be raised.
+//   maximizing_player_id: The id of the MAX player. The other player is assumed
+//     to be MIN. Passing in kInvalidPlayer will set this to the search root's
+//     current player.
+
+//   Returns:
+//     A pair of the value of the game for the maximizing player when both
+//     players play optimally, along with the action that achieves this value.
+
+std::pair<double, Action> ExpectiminimaxSearch(
+    const Game& game, const State* state,
+    std::function<double(const State&)> value_function, int depth_limit,
+    Player maximizing_player);
+
+
+// A SpielBot that uses one of the Minimax algorithms as its policy.
+// AlphaBetaSearch for deterministic games and ExpectiminimaxSearch for
+// explicit stochastic games.
+class MinimaxBot : public Bot {
+ public:
+  MinimaxBot(
+      const Game& game, std::function<double(const State&)> value_function,
+      int depth_limit, Player maximizing_player, bool verbose);
+  ~MinimaxBot() = default;
+
+  void Restart() override {}
+  void RestartAt(const State& state) override {}
+  // Run Minimax for one step, choosing the action, and printing some information.
+  Action Step(const State& state) override;
+
+  // Implements StepWithPolicy. This is equivalent to calling Step, but wraps
+  // the action as an ActionsAndProbs with 100% probability assigned to the
+  // lone action.
+  std::pair<ActionsAndProbs, Action> StepWithPolicy(
+      const State& state) override;
+
+  // Run Minimax on a given state, and return the value and best action.
+  std::pair<double, Action> MinimaxSearch(const State& state);
+
+ private:
+  int depth_limit_;
+  bool verbose_;
+  Player maximizing_player_;
+  std::function<double(const State&)> value_function_;
+  bool deterministic_game_;
+};
 
 }  // namespace algorithms
 }  // namespace open_spiel

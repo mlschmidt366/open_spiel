@@ -133,5 +133,26 @@ std::map<std::string, double> ValueIteration(const Game& game, int depth_limit,
   return values;
 }
 
+std::function<double(const State&)> MakeChanceValueFunction(const std::map<std::string, double>& solution) {
+  // capture 'solution' by copy, so that it is available even after the reference from the calling scope
+  // is deallocated
+  return [solution](const State& state)->double {
+    auto chance_evaluator = [&solution](const State& state, const auto& evaluator_ref)->double {
+      if (state.IsChanceNode() && solution.find(state.ToString()) == solution.end()) {
+        double value = 0;
+        for (const auto& actionprob : state.ChanceOutcomes()) {
+          auto child_state = state.Clone();
+          child_state->ApplyAction(actionprob.first);
+          double child_value = evaluator_ref(*child_state, evaluator_ref);
+          value += actionprob.second * child_value;
+        }
+        return value;
+      }
+      return solution.at(state.ToString());
+    };
+    return chance_evaluator(state, chance_evaluator);
+  };
+}
+
 }  // namespace algorithms
 }  // namespace open_spiel

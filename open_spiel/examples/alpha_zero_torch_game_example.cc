@@ -29,6 +29,8 @@
 #include "open_spiel/algorithms/alpha_zero_torch/vpevaluator.h"
 #include "open_spiel/algorithms/alpha_zero_torch/vpnet.h"
 #include "open_spiel/algorithms/mcts.h"
+#include "open_spiel/algorithms/minimax.h"
+#include "open_spiel/algorithms/value_iteration.h"
 #include "open_spiel/bots/human/human_bot.h"
 #include "open_spiel/spiel.h"
 #include "open_spiel/spiel_utils.h"
@@ -86,9 +88,19 @@ InitBot(std::string type, const open_spiel::Game &game,
   if (type == "random") {
     return open_spiel::MakeUniformRandomBot(player, Seed());
   }
+  if (type == "minimax") {
+    auto solution = open_spiel::algorithms::ValueIteration(game, -1, 0.01);
+    auto chance_solution = open_spiel::algorithms::MakeChanceValueFunction(solution);
+    auto value_function = [player, chance_solution](const open_spiel::State& state)->double {
+            return (player == open_spiel::Player{0} ? chance_solution(state) :
+                                                      -chance_solution(state));
+            };
+    return std::make_unique<open_spiel::algorithms::MinimaxBot>(
+        game, value_function, 1, player, absl::GetFlag(FLAGS_verbose));
+  }
 
   open_spiel::SpielFatalError(
-      "Bad player type. Known types: az, human, mcts, random");
+      "Bad player type. Known types: az, human, mcts, random, minimax");
 }
 
 open_spiel::Action GetAction(const open_spiel::State &state,
@@ -180,6 +192,8 @@ int main(int argc, char **argv) {
   std::cerr << "Game: " << game_name << std::endl;
   std::shared_ptr<const open_spiel::Game> game =
       open_spiel::LoadGame(game_name);
+  
+  bool alphazero_plays = false;
 
   // Ensure the game is AlphaZero-compatible and arguments are compatible.
   open_spiel::GameType game_type = game->GetType();
@@ -191,24 +205,29 @@ int main(int argc, char **argv) {
     open_spiel::SpielFatalError("Game must have sequential turns.");
   if (game_type.chance_mode != open_spiel::GameType::ChanceMode::kDeterministic)
     std::cerr << "The game is not deterministic!" << std::endl;
-  if (absl::GetFlag(FLAGS_az_path).empty())
-    open_spiel::SpielFatalError("AlphaZero path must be specified.");
-  if (absl::GetFlag(FLAGS_player1) != "az" &&
-      absl::GetFlag(FLAGS_player2) != "az")
-    open_spiel::SpielFatalError("One of the players must be AlphaZero.");
+  if (absl::GetFlag(FLAGS_player1) == "az" ||
+      absl::GetFlag(FLAGS_player2) == "az") {
+    if (absl::GetFlag(FLAGS_az_path).empty())
+      open_spiel::SpielFatalError("AlphaZero path must be specified.");
+    std::cerr << "AlphaZero is playing." << std::endl;
+    alphazero_plays = true;
+  }
 
-  open_spiel::algorithms::torch_az::DeviceManager device_manager;
-  device_manager.AddDevice(open_spiel::algorithms::torch_az::VPNetModel(
-      *game, absl::GetFlag(FLAGS_az_path), absl::GetFlag(FLAGS_az_graph_def),
-      "/cpu:0"));
-  device_manager.Get(0, 0)->LoadCheckpoint(absl::GetFlag(FLAGS_az_checkpoint));
-  auto az_evaluator =
-      std::make_shared<open_spiel::algorithms::torch_az::VPNetEvaluator>(
-          /*device_manager=*/&device_manager,
-          /*batch_size=*/absl::GetFlag(FLAGS_az_batch_size),
-          /*threads=*/absl::GetFlag(FLAGS_az_threads),
-          /*cache_size=*/absl::GetFlag(FLAGS_az_cache_size),
-          /*cache_shards=*/absl::GetFlag(FLAGS_az_cache_shards));
+  std::shared_ptr<open_spiel::algorithms::torch_az::VPNetEvaluator> az_evaluator = nullptr;
+  if (alphazero_plays) {
+    open_spiel::algorithms::torch_az::DeviceManager device_manager;
+    device_manager.AddDevice(open_spiel::algorithms::torch_az::VPNetModel(
+        *game, absl::GetFlag(FLAGS_az_path), absl::GetFlag(FLAGS_az_graph_def),
+        "/cpu:0"));
+    device_manager.Get(0, 0)->LoadCheckpoint(absl::GetFlag(FLAGS_az_checkpoint));
+    az_evaluator =
+        std::make_shared<open_spiel::algorithms::torch_az::VPNetEvaluator>(
+            /*device_manager=*/&device_manager,
+            /*batch_size=*/absl::GetFlag(FLAGS_az_batch_size),
+            /*threads=*/absl::GetFlag(FLAGS_az_threads),
+            /*cache_size=*/absl::GetFlag(FLAGS_az_cache_size),
+            /*cache_shards=*/absl::GetFlag(FLAGS_az_cache_shards));
+  }
   auto evaluator =
       std::make_shared<open_spiel::algorithms::RandomRolloutEvaluator>(
           absl::GetFlag(FLAGS_rollout_count), Seed());
