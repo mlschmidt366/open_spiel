@@ -312,6 +312,12 @@ MinimaxBot::MinimaxBot(const Game& game, std::function<double(const State&)> val
     SpielFatalError(absl::StrCat("The game should be either Deterministic or Explicit Stochastic, not ",
                                  game_info.chance_mode));
   }
+  if (verbose_) {
+    std::cerr << (deterministic_game_ ?
+                  "MinimaxBot uses AlphaBetaSearch for the Deterministic game." :
+                  "MinimaxBot uses ExpectiminimaxSearch for the Stochastic game.")
+              << std::endl;
+  }
   if (game_info.information != GameType::Information::kPerfectInformation) {
     SpielFatalError(
         absl::StrCat("The game must be a perfect information one, not ",

@@ -93,7 +93,7 @@ InitBot(std::string type, const open_spiel::Game &game,
     auto chance_solution = open_spiel::algorithms::MakeChanceValueFunction(solution);
     auto value_function = [player, chance_solution](const open_spiel::State& state)->double {
             return (player == open_spiel::Player{0} ? chance_solution(state) :
-                                          -chance_solution(state));
+                                                      -chance_solution(state));
             };
     return std::make_unique<open_spiel::algorithms::MinimaxBot>(
         game, value_function, 1, player, absl::GetFlag(FLAGS_verbose));
