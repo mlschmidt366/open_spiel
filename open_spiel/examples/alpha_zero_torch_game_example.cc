@@ -213,9 +213,9 @@ int main(int argc, char **argv) {
     alphazero_plays = true;
   }
 
+  open_spiel::algorithms::torch_az::DeviceManager device_manager;
   std::shared_ptr<open_spiel::algorithms::torch_az::VPNetEvaluator> az_evaluator = nullptr;
   if (alphazero_plays) {
-    open_spiel::algorithms::torch_az::DeviceManager device_manager;
     device_manager.AddDevice(open_spiel::algorithms::torch_az::VPNetModel(
         *game, absl::GetFlag(FLAGS_az_path), absl::GetFlag(FLAGS_az_graph_def),
         "/cpu:0"));
