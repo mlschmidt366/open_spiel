@@ -33,6 +33,12 @@ namespace algorithms {
 std::map<std::string, double> ValueIteration(const Game& game, int depth_limit,
                                              double threshold);
 
+
+// Expands a value solution over deterministic nodes to chance nodes.
+// Can also be used to simply wrap a 'solution' in a function.
+std::function<double(const State&)>
+    MakeChanceValueFunction(const std::map<std::string, double>& solution);
+
 }  // namespace algorithms
 }  // namespace open_spiel
 
