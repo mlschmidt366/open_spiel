@@ -29,6 +29,8 @@
 #include "open_spiel/algorithms/alpha_zero_torch/vpevaluator.h"
 #include "open_spiel/algorithms/alpha_zero_torch/vpnet.h"
 #include "open_spiel/algorithms/mcts.h"
+#include "open_spiel/algorithms/minimax.h"
+#include "open_spiel/algorithms/value_iteration.h"
 #include "open_spiel/bots/human/human_bot.h"
 #include "open_spiel/spiel.h"
 #include "open_spiel/spiel_utils.h"
@@ -86,9 +88,19 @@ InitBot(std::string type, const open_spiel::Game &game,
   if (type == "random") {
     return open_spiel::MakeUniformRandomBot(player, Seed());
   }
+  if (type == "minimax") {
+    auto solution = open_spiel::algorithms::ValueIteration(game, -1, 0.01);
+    auto chance_solution = open_spiel::algorithms::MakeChanceValueFunction(solution);
+    auto value_function = [player, chance_solution](const open_spiel::State& state)->double {
+            return (player == open_spiel::Player{0} ? chance_solution(state) :
+                                                      -chance_solution(state));
+            };
+    return std::make_unique<open_spiel::algorithms::MinimaxBot>(
+        game, value_function, 1, player, absl::GetFlag(FLAGS_verbose));
+  }
 
   open_spiel::SpielFatalError(
-      "Bad player type. Known types: az, human, mcts, random");
+      "Bad player type. Known types: az, human, mcts, random, minimax");
 }
 
 open_spiel::Action GetAction(const open_spiel::State &state,
