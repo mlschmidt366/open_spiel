@@ -49,6 +49,9 @@ void GetSubgameStates(State* state,
     std::string key = state->ToString();
     if (all_states->find(key) == all_states->end()) {
       (*all_states)[key] = state->Clone();
+    } else {
+      // Terminate, do not explore the same node twice
+      return;
     }
   }
 
